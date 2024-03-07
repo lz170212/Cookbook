@@ -11,8 +11,11 @@ import { Link } from 'react-router-dom';
 const imgs = [sampleImg1, sampleImg2, sampleImg3, sampleImg4, sampleImg5, sampleImg6, sampleImg7 ]
 
 const RecipeCard = ({ name, ingredients, cookTime = 30, index }) => {
+
+    let id = "0001"
+
     return (
-        <Link to={'/'}>
+        <Link to={`/recipe/${id}`}>
             <div className="border-2 w-[350px] h-[350px] rounded-md">
                 <div className='h-[60%] w-full flex items-center justify-center'>
                     <img src={imgs[index % 7]} className='h-full w-full'/>
@@ -23,7 +26,6 @@ const RecipeCard = ({ name, ingredients, cookTime = 30, index }) => {
                     <p className='line-clamp-2 px-3 mb-1'><span className='font-bold'>Ingredients:</span> {ingredients}</p>
                     <p className='px-3'><FaClock className='inline-block'/> {cookTime}min</p>
                 </div>
-                
             </div>
         </Link>
     )
