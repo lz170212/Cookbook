@@ -5,7 +5,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        inter: ["'Inter'", "sans-serif"],
+        gelasio: ["'Gelasio'", "serif"],
+        caveat: ["'Caveat'", "sans-serif"],
+        montserrat: ["'Montserrat'", "sans-serif"]
+
+      },
+    },
   },
   plugins: [],
 }
