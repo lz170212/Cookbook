@@ -21,11 +21,11 @@ export default function Header() {
                 </form>
                     
                 {currentUser ? (
-                    <Link to='/profile'>
+                    <Link to='/saved-dish'>
                         <img
                             className='rounded-full h-7 w-7 object-cover'
                             src={currentUser.avatar}
-                            alt='profile'
+                            alt='personal_page'
                         />
                     </Link>
                 ) : (
