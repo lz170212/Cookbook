@@ -1,9 +1,9 @@
 import DefaultUploadImg from '../img/upload-img-icon.jpg';
-// import InputLabel from '@mui/material/InputLabel';
-// import MenuItem from '@mui/material/MenuItem';
-// import FormControl from '@mui/material/FormControl';
-// import Select from '@mui/material/Select';
-import { useState } from 'react';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import { useEffect, useState } from 'react';
 
 const recipeStructure = {
     name: '',
@@ -34,14 +34,15 @@ const CreateRecipe = (req, res, next) => {
         setRecipe({...recipe, img: e.target})
     }
 
-    const handleAddRow = () => {
-        setRecipe({ ...recipe, ingredients: [ ...ingredients, '']})
+    const handleAddRow = (key) => {
+        let list = recipe[key]
+        setRecipe({ ...recipe, [key]: [ ...list , '' ]})
     }
 
-    const handleRemoveRow = (i) => {
-        let list = [ ...ingredients ]
+    const handleRemoveRow = (key, i) => {
+        let list = recipe[key]
         list.splice(i, 1)
-        setRecipe({...recipe, ingredients: list})
+        setRecipe({...recipe, [key]: list})
     }
 
 
@@ -49,7 +50,7 @@ const CreateRecipe = (req, res, next) => {
         <main className='lg:max-w-[90vw] max-w-[80vw] mx-auto font-montserrat'>
             <h1 className="font-medium text-3xl text-center my-5">Create A Recipe</h1>
 
-            <form className="flex flex-col px-[5vw] md:px-[7vw] lg:px-[10vw] lg:flex-row max-lg:gap-10 lg:gap-16 w-full min-h-[90vh] mt-10">
+            <form className="flex flex-col px-[5vw] md:px-[7vw] lg:px-[10vw] lg:flex-row lg:justify-center max-lg:gap-10 lg:gap-16 w-full min-h-[90vh] mt-10">
                 <div className="flex flex-col gap-10">
                     <label htmlFor="uploadBanner" className="border-4 border-slate-300 flex justify-center items-center">
                         <img src={img ? img : DefaultUploadImg} className='max-w-[500px] opacity-30'/>
@@ -70,7 +71,7 @@ const CreateRecipe = (req, res, next) => {
                     >
                     </textarea>
 
-                    {/* <div>  
+                    <div>  
                         <FormControl fullWidth>
                             <InputLabel id="estimated-prep-time">Est. Prep Time</InputLabel>
                             <Select
@@ -87,7 +88,7 @@ const CreateRecipe = (req, res, next) => {
                                 <MenuItem value={60}>60</MenuItem>
                             </Select>
                         </FormControl>
-                    </div> */}
+                    </div>
                 </div>
 
                 <div className="">
@@ -112,16 +113,19 @@ const CreateRecipe = (req, res, next) => {
                                     return (
                                         <div key={i}>
                                             <div className='my-1 flex gap-2 justify-center items-center'>
-                                                <input type="text" className='h-10 w-full px-2' placeholder='New Ingredient...'/>
-                                                <span className='cursor-pointer'>x</span>
+                                                <input type="text" className='h-10 w-full lg:w-[650px] px-2' placeholder='New Ingredient...'/>
+                                                <span className='cursor-pointer' onClick={(i) => {handleRemoveRow('ingredients', i)}}>x</span>
                                             </div>
                                         </div>
                                     )
                                 })
                             }
 
-                            <div className='w-1/2 border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' onClick={handleAddRow}>Add Ingredient</div>
-                            
+                            <div className='flex justify-center'>
+                                <span className='w-1/4 border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
+                                    onClick={() => {handleAddRow('ingredients')}}
+                                >Add Ingredients</span>
+                            </div>                            
                         </div>
                     
                     </div>
@@ -134,20 +138,22 @@ const CreateRecipe = (req, res, next) => {
                                     return (
                                         <div key={i}>
                                             <div className='my-1 flex gap-2 justify-center items-center'>
-                                                <input type="text" className='h-10 w-full px-2' placeholder='Next step...'/>
-                                                <span className='cursor-pointer'>x</span>
+                                                <input type="text" className='h-10 w-full lg:w-[650px] px-2' placeholder='Next step...'/>
+                                                <span className='cursor-pointer' onClick={() => {handleRemoveRow('instructions', i)}}>x</span>
                                             </div>
                                         </div>
                                     )
                                 })
                             }
 
-                            <div className='w-1/2 border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' onClick={handleAddRow}>Add Step</div>
+                            <div className='flex justify-center'>
+                                <span className='w-1/4 border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
+                                    onClick={() => {handleAddRow('instructions')}}
+                                >Add Step</span>
+                            </div>
                     </div>
                 </div>
-
             </form>
-
 
         </main>
     )
