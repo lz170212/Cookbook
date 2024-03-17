@@ -9,7 +9,7 @@ const recipeSchema = new mongoose.Schema({
     image: {
         type: String,
     },
-    tags: {
+    highlights: {
         type: [String], 
         required: true
         
