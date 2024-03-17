@@ -9,6 +9,7 @@ import SavedDish from './pages/SavedDish';
 import WeeklyMenu from './pages/WeeklyMenu';
 import Profile from './pages/Profile';
 import ShoppingList from './pages/ShoppingList';
+import CreateRecipe from './pages/CreateRecipe';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Route path='/shopping-list' element={<ShoppingList/>}/>
           <Route path='/profile' element={<Profile/>}/>
         </Route>
+        <Route path='/create-recipe' element={<CreateRecipe />} />
       </Routes>
     </BrowserRouter>
   );

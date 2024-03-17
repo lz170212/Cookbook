@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
+import recipeRoute from './routes/recipe.route.js'
+
 dotenv.config();
 mongoose
  .connect(process.env.MONGO)
@@ -24,6 +26,7 @@ app.get('/', (req,res)=>{
 });
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/recipe", recipeRoute);
 
 app.use((err,req, res,next)=>{
     const statusCode = err.statusCode || 500;
