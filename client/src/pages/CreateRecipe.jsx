@@ -122,7 +122,7 @@ const CreateRecipe = (req, res, next) => {
                             }
 
                             <div className='flex justify-center'>
-                                <span className='w-1/4 border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
+                                <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
                                     onClick={() => {handleAddRow('ingredients')}}
                                 >Add Ingredients</span>
                             </div>                            
@@ -147,7 +147,7 @@ const CreateRecipe = (req, res, next) => {
                             }
 
                             <div className='flex justify-center'>
-                                <span className='w-1/4 border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
+                                <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
                                     onClick={() => {handleAddRow('instructions')}}
                                 >Add Step</span>
                             </div>
