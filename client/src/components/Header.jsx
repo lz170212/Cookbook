@@ -9,7 +9,7 @@ export default function Header() {
     const { currentUser } = useSelector((state) => state.user);
     const [isOpen, setIsOpen] =useState(false);// for drop down nav
     return (
-        <header className='bg-slate-200 shadow-md '>
+        <header className='sticky -top-0 bg-slate-200 shadow-md '>
             <div className='flex justify-between items-center max-w-6xl  mx-auto p-3'>
                 <Link to='/'>
                     <h1 className='font-bold text-sm sm:text-xl flex flex-wrap'>
