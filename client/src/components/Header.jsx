@@ -1,12 +1,15 @@
 import React from 'react';
 import { FaSearch } from 'react-icons/fa';
 import {Link} from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector} from 'react-redux';
+import DropDownNav from './DropDownNav';
+import {useState} from 'react';
 
 export default function Header() {
     const { currentUser } = useSelector((state) => state.user);
+    const [isOpen, setIsOpen] =useState(false);// for drop down nav
     return (
-        <header className='bg-slate-200 shadow-md'>
+        <header className='bg-slate-200 shadow-md '>
             <div className='flex justify-between items-center max-w-6xl  mx-auto p-3'>
                 <Link to='/'>
                     <h1 className='font-bold text-sm sm:text-xl flex flex-wrap'>
@@ -21,13 +24,16 @@ export default function Header() {
                 </form>
                     
                 {currentUser ? (
-                    <Link to='/saved-dish'>
+                    <div>
                         <img
-                            className='rounded-full h-7 w-7 object-cover'
+                            className='rounded-full h-7 w-7 object-cover cursor-pointer'
                             src={currentUser.avatar}
                             alt='personal_page'
+                            onClick= {()=>setIsOpen(!isOpen)}
                         />
-                    </Link>
+                        {isOpen &&<DropDownNav></DropDownNav>}
+                        
+                    </div>
                 ) : (
                     <ul className='flex gap-4'>
                         <Link to='/sign-in'>   

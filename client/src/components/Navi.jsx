@@ -21,8 +21,6 @@ export default function Navi() {
                 gap-x-4 curson-pointer p-5 hover:bg-white  rounded-md' onClick={changeColor()}><NavLink to={menu.url}  ><span className='font-medium flex-1'>{menu.title}</span></NavLink></li>
             ))
         }
-        
-
        </ul>
     </nav>
   )
