@@ -9,6 +9,7 @@ import SavedDish from './pages/SavedDish';
 import WeeklyMenu from './pages/WeeklyMenu';
 import Profile from './pages/Profile';
 import ShoppingList from './pages/ShoppingList';
+import CreateRecipePage from './pages/CreateRecipe';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path='/recipe/:id' element={<RecipePage />} />
         <Route path='/sign-in' element={<SignIn/>}/>
         <Route path='/sign-up' element={<SignUp/>}/>
+        <Route path='/create-recipe' element={<CreateRecipePage />} />
         <Route element={<PrivateRoute/>}>
           <Route path='/saved-dish' element={<SavedDish/>}/>
           <Route path='/weekly-menu' element={<WeeklyMenu/>}/>
