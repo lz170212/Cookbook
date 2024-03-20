@@ -1,11 +1,15 @@
 import DefaultUploadImg from '../img/upload-img-icon.jpg';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { FaMinusSquare } from 'react-icons/fa'
+import { app } from '../firebase';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { set } from 'mongoose';
 
 const recipeStructure = {
     name: '',
     image: '',
     highlights: [],
-    ingredients: [],
+    ingredients: ['', '', ''],
     instructions: [],
     prep_time: ''
 }
@@ -24,10 +28,27 @@ const HighlightCheckbox = ({value}) => {
 const CreateRecipePage = (req, res, next) => {
 
     const [ recipe, setRecipe ] = useState(recipeStructure)
-    let { name, img, highlights, ingredients, instructions, prep_time } = recipe;
+
+    let { name, image, highlights, ingredients, instructions, prep_time } = recipe;
 
     const handleImgUpload = (e) => {
-        setRecipe({...recipe, img: e.target})
+        let file = e.target.files[0]
+        if(!file){
+            return
+        }
+        const storage = getStorage(app);
+        const fileName = new Date().getTime() + file.name;
+        const imageRef = ref(storage, fileName);
+        uploadBytes(imageRef, file)
+            .then((snapshot) => {
+                getDownloadURL(snapshot.ref)
+                    .then((url) => {
+                        setRecipe({ ...recipe, image: url})
+                    })
+                    .catch(err => console.log(48, err.message))
+            })
+
+        console.log(recipe.image)
     }
 
     const handleAddRow = (key) => {
@@ -48,14 +69,14 @@ const CreateRecipePage = (req, res, next) => {
 
             <form className="flex flex-col px-[5vw] md:px-[7vw] lg:px-[10vw] lg:flex-row lg:justify-center max-lg:gap-10 lg:gap-16 w-full min-h-[90vh] mt-10">
                 <div className="flex flex-col gap-10">
-                    <label htmlFor="uploadBanner" className="border-4 border-slate-300 flex justify-center items-center">
-                        <img src={img ? img : DefaultUploadImg} className='max-w-[500px] opacity-30'/>
+                    <label htmlFor="uploadBanner" className="border-4 border-slate-300 rounded-md flex justify-center items-center">
+                        <img src={image ? image : DefaultUploadImg} className='min-w-[400px] aspect-square'/>
                         <input
                             id="uploadBanner"
                             type="file"
                             accept=".png, .jpg, .jpeg"
                             hidden
-                            onChange={handleImgUpload}
+                            onChange={(e)=>{handleImgUpload(e)}}
                         />
                     </label>
 
@@ -96,18 +117,16 @@ const CreateRecipePage = (req, res, next) => {
                         <div className='my-3'>
 
                             {
-                                ingredients.map((item, i) => {
+                                ingredients.map((item, index) => {
                                     return (
-                                        <div key={i}>
-                                            <div className='my-1 flex gap-2 justify-center items-center'>
-                                                <input type="text" className='h-10 w-full lg:w-[650px] px-2' placeholder='New Ingredient...'/>
-                                                <span className='cursor-pointer' onClick={(i) => {handleRemoveRow('ingredients', i)}}>x</span>
-                                            </div>
+                                        <div key={index} className='flex gap-3 items-center my-1'>
+                                            <input type="text" className='h-10 w-full lg:w-[650px] px-2' placeholder='New Ingredient...'/>
+                                            <FaMinusSquare  className='cursor-pointer rounded-md text-2xl hover:text-red-500'/>
                                         </div>
                                     )
                                 })
                             }
-
+                            
                             <div className='flex justify-center'>
                                 <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
                                     onClick={() => {handleAddRow('ingredients')}}
@@ -121,23 +140,23 @@ const CreateRecipePage = (req, res, next) => {
                         <p className='text-xl font-medium text-blue-600'>Add Instructions</p>
 
                         {
-                                instructions.map((item, i) => {
-                                    return (
-                                        <div key={i}>
-                                            <div className='my-1 flex gap-2 justify-center items-center'>
-                                                <input type="text" className='h-10 w-full lg:w-[650px] px-2' placeholder='Next step...'/>
-                                                <span className='cursor-pointer' onClick={() => {handleRemoveRow('instructions', i)}}>x</span>
-                                            </div>
+                            instructions.map((item, i) => {
+                                return (
+                                    <div key={i}>
+                                        <div className='my-1 flex gap-2 justify-center items-center'>
+                                            <input type="text" className='h-10 w-full lg:w-[650px] px-2' placeholder='Next step...'/>
+                                            <span className='cursor-pointer' onClick={() => {handleRemoveRow('instructions', i)}}>x</span>
                                         </div>
-                                    )
-                                })
-                            }
+                                    </div>
+                                )
+                            })
+                        }
 
-                            <div className='flex justify-center'>
-                                <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
-                                    onClick={() => {handleAddRow('instructions')}}
-                                >Add Step</span>
-                            </div>
+                        <div className='flex justify-center'>
+                            <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
+                                onClick={() => {handleAddRow('instructions')}}
+                            >Add Step</span>
+                        </div>
                     </div>
                 </div>
             </form>
