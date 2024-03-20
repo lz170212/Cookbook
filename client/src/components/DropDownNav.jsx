@@ -8,6 +8,7 @@ export default function DropDownNav() {
     { title: "Weekly Menu", url: "/weekly-menu" },
     { title: "Shopping List", url: "/shopping-list" },
     { title: "Profile", url: "/profile" },
+    { title: "Create New Recipe", url: "/create-recipe"}
   ];
   const [isClosed, setIsClose] = useState(true);
   const toggling = () => setIsClose(false);
