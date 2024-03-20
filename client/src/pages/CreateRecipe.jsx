@@ -1,6 +1,6 @@
 import DefaultUploadImg from '../img/upload-img-icon.jpg';
 import { useState } from 'react';
-import { FaMinusSquare } from 'react-icons/fa'
+import { FaMinusSquare, FaPlusSquare } from 'react-icons/fa'
 import { app } from '../firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
@@ -76,12 +76,14 @@ const CreateRecipePage = (req, res, next) => {
         setRecipe({...recipe, target})
     }
 
+    const handleRecipeSave = () => {
+
+    }
+
 
     return (
         <main className='font-montserrat max-w-[95vw] flex flex-col mx-auto  py-4 px-[5vw] md:px-[7vw] lg:px-[10vw]'>
             <h1 className="font-medium text-3xl text-center my-6">Create A Recipe</h1>
-
-            <h1>{recipe.instructions.join('&&')}</h1>
 
             <form className="flex max-md:flex-col gap-16 lg:gap-28 mt-10 justify-center">
                 <div className="flex flex-col gap-10 ">
@@ -134,6 +136,8 @@ const CreateRecipePage = (req, res, next) => {
 
                     <div className='my-3'>
                         <p className='text-xl font-medium text-blue-600'>Ingredients</p>
+
+                        <p className='font-gelasio italic my-1 text-gray-500'>Please use numeric numbers for the amount. Eg. 1 medium carrots. </p>
                     
                         {
                             ingredients.map((item, i) => {
@@ -155,9 +159,9 @@ const CreateRecipePage = (req, res, next) => {
                         }
                         
                         <div className='flex justify-start'>
-                            <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
+                            <span className='h-10 w-[40vw] lg:w-[35vw] border-2 border-dashed mt-2 flex justify-center items-center text-4xl rounded-md cursor-pointer' 
                                 onClick={() => {handleAddRow('ingredients')}}
-                            >Add More</span>
+                            >+</span>
                         </div>                           
                     </div>
 
@@ -184,14 +188,20 @@ const CreateRecipePage = (req, res, next) => {
                         }
                         
                         <div className='flex justify-start'>
-                            <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
+                            <span className='h-10 w-[40vw] lg:w-[35vw] border-2 border-dashed mt-2 flex justify-center items-center text-4xl rounded-md cursor-pointer' 
                                 onClick={() => {handleAddRow('instructions')}}
-                            >Add Another Step</span>
+                            >+</span>
                         </div>                           
                     </div>
-                    
                 </div>
             </form>
+            
+            <div className='flex justify-center mt-16'>
+                <button 
+                    className='w-[300px] bg-black text-white rounded-full py-3 px-6 text-xl capitalize hover:bg-opacity-80'
+                    onClick={handleRecipeSave}
+                >Save Recipe</button>
+            </div>
 
         </main>
     )
