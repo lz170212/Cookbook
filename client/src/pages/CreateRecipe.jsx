@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { FaMinusSquare, FaPlusSquare } from 'react-icons/fa'
 import { app } from '../firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { Toaster, toast } from 'react-hot-toast'
 
 const recipeStructure = {
     name: '',
@@ -63,26 +64,83 @@ const CreateRecipePage = (req, res, next) => {
         setRecipe({...recipe, highlights: highlights})
     }
 
-    const handleInputFieldChange = (e, key, i) => {
-        let target = key === 'ingredients' ? ingredients : instructions
-
-        target[i] = e.target.value
-        setRecipe({ ...recipe, target})
+    const handleInputFieldChange = (e, key, i) => {        
+        if(key === 'ingredients'){
+            ingredients[i] = e.target.value
+            setRecipe({ ...recipe, ingredients})
+        } else {
+            instructions[i] = e.target.value
+            setRecipe({ ...recipe, instructions})
+        }
+        
     }
 
     const handleInputFieldDelete = (i, key) => {
-        let target = key === 'ingredients' ? ingredients : instructions
-        target.splice(i, 1)
-        setRecipe({...recipe, target})
+        if(key === 'ingredients'){
+            ingredients.splice(i, 1)
+            setRecipe({...recipe, ingredients})
+        } else {
+            instructions.splice(i, 1)
+            setRecipe({...recipe, instructions})
+        }
     }
 
-    const handleRecipeSave = () => {
+    const handleRecipeSave = async (e) => {
+        
+        if(!name.length){
+            toast.error('Please give your recipe a name in order to save')
+        }
+        if(!image.length){
+            toast.error('Please upload a cover image for your recipe')
+        }
+        if(!highlights.length){
+            toast.error('Please choose at least 1 highlight in order to save')
+        }
+        if(prep_time === '' || prep_time === 'please select'){
+            toast.error('Please provide an estimate of prep time in order to save')
+        }
+        if(!ingredients.join('').length){
+            toast.error('Please provide ingredients for your recipe in order to save')
+        }
+        if(!instructions.join('').length){
+            toast.error('Please provide instructions for your recipe in order to save')
+        }
+
+        let loadingToast = toast.loading('saving recipe...')
+
+        try {
+            const res = await fetch('/api/recipe/create-recipe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(recipe)
+            });
+
+            const data = await res.json();
+
+            if(data.success === false){
+                // setError(data.message)
+                toast.dismiss(loadingToast)
+                return
+            }
+
+            toast.dismiss(loadingToast)
+            toast.success("Saved 👍")
+            console.log(data)
+            // navigate('/');
+
+        } catch(err){
+            toast.dismiss(loadingToast)
+            // setError(err.message);
+        }
 
     }
 
 
     return (
-        <main className='font-montserrat max-w-[95vw] flex flex-col mx-auto  py-4 px-[5vw] md:px-[7vw] lg:px-[10vw]'>
+        <main className='font-montserrat max-w-[90vw] flex flex-col mx-auto  py-4 px-[5vw] md:px-[7vw] lg:px-[10vw]'>
+            <Toaster />
             <h1 className="font-medium text-3xl text-center my-6">Create A Recipe</h1>
 
             <form className="flex max-md:flex-col gap-16 lg:gap-28 mt-10 justify-center">
@@ -109,6 +167,7 @@ const CreateRecipePage = (req, res, next) => {
                     <div>
                         <label className='text-xl font-medium text-blue-600'>Estimated Prep Time</label>
                         <select className='w-full h-14 rounded-md mt-2' onChange={(e) => {setRecipe({ ...recipe, prep_time: e.target.value})}}>
+                            <option>please select</option>
                             <option value={15}>15 min</option>
                             <option value={30}>30 min</option>
                             <option value={45}>45 min</option>
