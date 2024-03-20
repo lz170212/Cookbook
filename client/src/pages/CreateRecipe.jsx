@@ -3,27 +3,17 @@ import { useState } from 'react';
 import { FaMinusSquare } from 'react-icons/fa'
 import { app } from '../firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import { set } from 'mongoose';
 
 const recipeStructure = {
     name: '',
     image: '',
     highlights: [],
     ingredients: ['', '', ''],
-    instructions: [],
+    instructions: ['', '', ''],
     prep_time: ''
 }
-
 const highlightOptions = ['low carb', 'high protein', 'vegetarian', 'under 500 calories', 'under 30min', 'budget friendly', 'meat lover']
 
-const HighlightCheckbox = ({value}) => {
-    return (
-        <div className='flex gap-2 pr-3 py-2 font-montserrat'>
-            <input type="checkbox" id={value} className='w-5'/>
-            <span className='capitalize'>{value}</span>
-        </div>
-    )
-}
 
 const CreateRecipePage = (req, res, next) => {
 
@@ -62,12 +52,27 @@ const CreateRecipePage = (req, res, next) => {
         setRecipe({...recipe, [key]: list})
     }
 
+    const handleHighlightsChange = (item) => {
+        let i = highlights.indexOf(item)
+        if( i !== -1){
+            highlights.splice(i, 1)
+        } else {
+            highlights.push(item)
+        }
+        
+        setRecipe({...recipe, highlights: highlights})
+    }
+
+    const handleIngredientChange = (e, i) => {
+        console.log(e.target.value, i)
+    }
+
 
     return (
-        <main className='lg:max-w-[90vw] max-w-[80vw] mx-auto font-montserrat'>
-            <h1 className="font-medium text-3xl text-center my-5">Create A Recipe</h1>
+        <main className='font-montserrat max-w-[95vw] flex flex-col mx-auto  py-4 px-[5vw] md:px-[7vw] lg:px-[10vw]'>
+            <h1 className="font-medium text-3xl text-center my-6">Create A Recipe</h1>
 
-            <form className="flex flex-col px-[5vw] md:px-[7vw] lg:px-[10vw] lg:flex-row lg:justify-center max-lg:gap-10 lg:gap-16 w-full min-h-[90vh] mt-10">
+            <form className="flex gap-16 lg:gap-28 mt-10 border-2 justify-center items-center">
                 <div className="flex flex-col gap-10">
                     <label htmlFor="uploadBanner" className="border-4 border-slate-300 rounded-md flex justify-center items-center">
                         <img src={image ? image : DefaultUploadImg} className='min-w-[400px] aspect-square'/>
@@ -89,23 +94,28 @@ const CreateRecipePage = (req, res, next) => {
                     </textarea>
 
                     <div>
-                        <label className='font-montserrat text-xl font-medium text-blue-600'>Estimated Prep Time</label>
-                        <select className='w-full h-16 rounded-md'>
-                            <option>15</option>
-                            <option>30</option>
-                            <option>45</option>
-                            <option>50</option>
+                        <label className='text-xl font-medium text-blue-600'>Estimated Prep Time</label>
+                        <select className='w-full h-14 rounded-md mt-2' onChange={(e) => {setRecipe({ ...recipe, prep_time: e.target.value})}}>
+                            <option value={15}>15 min</option>
+                            <option value={30}>30 min</option>
+                            <option value={45}>45 min</option>
+                            <option value={60}>60 min</option>
                         </select>
                     </div>
                 </div>
 
-                <div className="">
+                <div className="min-w-[50%] flex flex-col gap-10">
                     <div>
-                        <p className='font-montserrat text-xl font-medium text-blue-600'>Recipe Highlights</p>
-                        <div className='my-3 flex gap-2 flex-wrap'>
+                        <p className='text-xl font-medium text-blue-600'>Recipe Highlights</p>
+                        <div className='mt-3'>
                             {
-                                highlightOptions.map((value, i) => {
-                                    return <HighlightCheckbox key={i} value={value} />
+                                highlightOptions.map((item, i) => {
+                                    return (
+                                        <div key={i} className='flex gap-2'>
+                                            <input type="checkbox" id={item} className='w-5' onChange={() => handleHighlightsChange(item)}/>
+                                            <span className='capitalize'>{item}</span>
+                                        </div>
+                                    )
                                 })
                             }
                         </div>
@@ -117,20 +127,25 @@ const CreateRecipePage = (req, res, next) => {
                         <div className='my-3'>
 
                             {
-                                ingredients.map((item, index) => {
+                                ingredients.map((item, i) => {
                                     return (
-                                        <div key={index} className='flex gap-3 items-center my-1'>
-                                            <input type="text" className='h-10 w-full lg:w-[650px] px-2' placeholder='New Ingredient...'/>
+                                        <div key={i} className='flex items-center gap-3 my-1'>
+                                            <input 
+                                                type="text" 
+                                                className='h-10 rounded-md px-2' 
+                                                // value={item}
+                                                onChange={(e, i) => {handleIngredientChange(e, i)}}
+                                            />
                                             <FaMinusSquare  className='cursor-pointer rounded-md text-2xl hover:text-red-500'/>
                                         </div>
                                     )
                                 })
                             }
                             
-                            <div className='flex justify-center'>
+                            <div className='flex justify-start'>
                                 <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
                                     onClick={() => {handleAddRow('ingredients')}}
-                                >Add Ingredients</span>
+                                >Add More</span>
                             </div>                            
                         </div>
                     
@@ -152,7 +167,7 @@ const CreateRecipePage = (req, res, next) => {
                             })
                         }
 
-                        <div className='flex justify-center'>
+                        <div className='flex justify-start'>
                             <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
                                 onClick={() => {handleAddRow('instructions')}}
                             >Add Step</span>
