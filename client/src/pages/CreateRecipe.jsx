@@ -64,7 +64,13 @@ const CreateRecipePage = (req, res, next) => {
     }
 
     const handleIngredientChange = (e, i) => {
-        console.log(e.target.value, i)
+        ingredients[i] = e.target.value
+        setRecipe({ ...recipe, ingredients})
+    }
+
+    const handleIngredientDelete = (i) => {
+        ingredients.splice(i, 1)
+        setRecipe({...recipe, ingredients})
     }
 
 
@@ -72,8 +78,10 @@ const CreateRecipePage = (req, res, next) => {
         <main className='font-montserrat max-w-[95vw] flex flex-col mx-auto  py-4 px-[5vw] md:px-[7vw] lg:px-[10vw]'>
             <h1 className="font-medium text-3xl text-center my-6">Create A Recipe</h1>
 
-            <form className="flex gap-16 lg:gap-28 mt-10 border-2 justify-center items-center">
-                <div className="flex flex-col gap-10">
+            <h1>{recipe.ingredients.join('&&')}</h1>
+
+            <form className="flex max-md:flex-col gap-16 lg:gap-28 mt-10 justify-center">
+                <div className="flex flex-col gap-10 ">
                     <label htmlFor="uploadBanner" className="border-4 border-slate-300 rounded-md flex justify-center items-center">
                         <img src={image ? image : DefaultUploadImg} className='min-w-[400px] aspect-square'/>
                         <input
@@ -106,7 +114,7 @@ const CreateRecipePage = (req, res, next) => {
 
                 <div className="min-w-[50%] flex flex-col gap-10">
                     <div>
-                        <p className='text-xl font-medium text-blue-600'>Recipe Highlights</p>
+                        <p className='text-xl font-medium text-blue-600'>Highlights</p>
                         <div className='mt-3'>
                             {
                                 highlightOptions.map((item, i) => {
@@ -122,21 +130,23 @@ const CreateRecipePage = (req, res, next) => {
                     </div>
 
                     <div>
-                        <p className='text-xl font-medium text-blue-600'>Key Ingredients</p>
+                        <p className='text-xl font-medium text-blue-600'>Ingredients</p>
                         
                         <div className='my-3'>
-
                             {
                                 ingredients.map((item, i) => {
                                     return (
                                         <div key={i} className='flex items-center gap-3 my-1'>
                                             <input 
                                                 type="text" 
-                                                className='h-10 rounded-md px-2' 
-                                                // value={item}
-                                                onChange={(e, i) => {handleIngredientChange(e, i)}}
+                                                className='h-10 w-[40vw] lg:w-[35vw] rounded-md px-2'
+                                                value={item} 
+                                                onChange={(e) => {handleIngredientChange(e, i)}}
                                             />
-                                            <FaMinusSquare  className='cursor-pointer rounded-md text-2xl hover:text-red-500'/>
+                                            <FaMinusSquare  
+                                                className='cursor-pointer rounded-md text-2xl hover:text-red-500'
+                                                onClick={() => {handleIngredientDelete(i)}}
+                                            />
                                         </div>
                                     )
                                 })
@@ -152,14 +162,14 @@ const CreateRecipePage = (req, res, next) => {
                     </div>
 
                     <div className='my-3'>
-                        <p className='text-xl font-medium text-blue-600'>Add Instructions</p>
+                        <p className='text-xl font-medium text-blue-600'>Instructions</p>
 
                         {
                             instructions.map((item, i) => {
                                 return (
                                     <div key={i}>
-                                        <div className='my-1 flex gap-2 justify-center items-center'>
-                                            <input type="text" className='h-10 w-full lg:w-[650px] px-2' placeholder='Next step...'/>
+                                        <div className='my-1 flex gap-2 items-center'>
+                                            <input type="text" className='h-10 w-[40vw] lg:w-[35vw] rounded-md px-2' placeholder='Next step...'/>
                                             <span className='cursor-pointer' onClick={() => {handleRemoveRow('instructions', i)}}>x</span>
                                         </div>
                                     </div>
