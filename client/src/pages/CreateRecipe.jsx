@@ -63,14 +63,17 @@ const CreateRecipePage = (req, res, next) => {
         setRecipe({...recipe, highlights: highlights})
     }
 
-    const handleIngredientChange = (e, i) => {
-        ingredients[i] = e.target.value
-        setRecipe({ ...recipe, ingredients})
+    const handleInputFieldChange = (e, key, i) => {
+        let target = key === 'ingredients' ? ingredients : instructions
+
+        target[i] = e.target.value
+        setRecipe({ ...recipe, target})
     }
 
-    const handleIngredientDelete = (i) => {
-        ingredients.splice(i, 1)
-        setRecipe({...recipe, ingredients})
+    const handleInputFieldDelete = (i, key) => {
+        let target = key === 'ingredients' ? ingredients : instructions
+        target.splice(i, 1)
+        setRecipe({...recipe, target})
     }
 
 
@@ -78,7 +81,7 @@ const CreateRecipePage = (req, res, next) => {
         <main className='font-montserrat max-w-[95vw] flex flex-col mx-auto  py-4 px-[5vw] md:px-[7vw] lg:px-[10vw]'>
             <h1 className="font-medium text-3xl text-center my-6">Create A Recipe</h1>
 
-            <h1>{recipe.ingredients.join('&&')}</h1>
+            <h1>{recipe.instructions.join('&&')}</h1>
 
             <form className="flex max-md:flex-col gap-16 lg:gap-28 mt-10 justify-center">
                 <div className="flex flex-col gap-10 ">
@@ -129,60 +132,64 @@ const CreateRecipePage = (req, res, next) => {
                         </div>
                     </div>
 
-                    <div>
-                        <p className='text-xl font-medium text-blue-600'>Ingredients</p>
-                        
-                        <div className='my-3'>
-                            {
-                                ingredients.map((item, i) => {
-                                    return (
-                                        <div key={i} className='flex items-center gap-3 my-1'>
-                                            <input 
-                                                type="text" 
-                                                className='h-10 w-[40vw] lg:w-[35vw] rounded-md px-2'
-                                                value={item} 
-                                                onChange={(e) => {handleIngredientChange(e, i)}}
-                                            />
-                                            <FaMinusSquare  
-                                                className='cursor-pointer rounded-md text-2xl hover:text-red-500'
-                                                onClick={() => {handleIngredientDelete(i)}}
-                                            />
-                                        </div>
-                                    )
-                                })
-                            }
-                            
-                            <div className='flex justify-start'>
-                                <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
-                                    onClick={() => {handleAddRow('ingredients')}}
-                                >Add More</span>
-                            </div>                            
-                        </div>
-                    
-                    </div>
-
                     <div className='my-3'>
-                        <p className='text-xl font-medium text-blue-600'>Instructions</p>
-
+                        <p className='text-xl font-medium text-blue-600'>Ingredients</p>
+                    
                         {
-                            instructions.map((item, i) => {
+                            ingredients.map((item, i) => {
                                 return (
-                                    <div key={i}>
-                                        <div className='my-1 flex gap-2 items-center'>
-                                            <input type="text" className='h-10 w-[40vw] lg:w-[35vw] rounded-md px-2' placeholder='Next step...'/>
-                                            <span className='cursor-pointer' onClick={() => {handleRemoveRow('instructions', i)}}>x</span>
-                                        </div>
+                                    <div key={i} className='flex items-center gap-3 my-1'>
+                                        <input 
+                                            type="text" 
+                                            className='h-10 w-[40vw] lg:w-[35vw] rounded-md px-2'
+                                            value={item} 
+                                            onChange={(e) => {handleInputFieldChange(e, 'ingredients', i)}}
+                                        />
+                                        <FaMinusSquare  
+                                            className='cursor-pointer rounded-md text-2xl hover:text-red-500'
+                                            onClick={() => {handleInputFieldDelete(i, 'ingredients')}}
+                                        />
                                     </div>
                                 )
                             })
                         }
+                        
+                        <div className='flex justify-start'>
+                            <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
+                                onClick={() => {handleAddRow('ingredients')}}
+                            >Add More</span>
+                        </div>                           
+                    </div>
 
+                    <div className='my-3'>
+                        <p className='text-xl font-medium text-blue-600'>Instructions</p>
+                    
+                        {
+                            instructions.map((item, i) => {
+                                return (
+                                    <div key={i} className='flex items-center gap-3 my-1'>
+                                        <input 
+                                            type="text" 
+                                            className='h-10 w-[40vw] lg:w-[35vw] rounded-md px-2'
+                                            value={item} 
+                                            onChange={(e) => {handleInputFieldChange(e, 'instructions', i)}}
+                                        />
+                                        <FaMinusSquare  
+                                            className='cursor-pointer rounded-md text-2xl hover:text-red-500'
+                                            onClick={() => {handleInputFieldDelete(i, 'instructions')}}
+                                        />
+                                    </div>
+                                )
+                            })
+                        }
+                        
                         <div className='flex justify-start'>
                             <span className='min-w-fit border-2 border-gray-500 rounded-full px-2 py-1 my-2 text-center cursor-pointer' 
                                 onClick={() => {handleAddRow('instructions')}}
-                            >Add Step</span>
-                        </div>
+                            >Add Another Step</span>
+                        </div>                           
                     </div>
+                    
                 </div>
             </form>
 
