@@ -1,7 +1,7 @@
 import Recipe from '../models/recipe.model.js';
 
 export const getAllRecipes = async (req, res, next) => {
-    let maxLimit = 5;
+    let maxLimit = 6;
     
     try{
         let data = await Recipe.find()
