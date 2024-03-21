@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import sampleImg from "../img/sample1.jpeg"
+import { useState, useEffect } from "react";
 
 let recipe = {
     name: 'Crispy Salt and Pepper Potatoes',
@@ -18,18 +19,46 @@ let recipe = {
     tags: ['low carb', 'lunch', 'egg', 'potato']
 }
 
+const recipeStructure = {
+    name: '',
+    author: '',
+    image: '',
+    highlights: [],
+    ingredients: [],
+    instructions: [],
+    prep_time: ''
+}
+
 const RecipePage = () => {
 
-    let { id } = useParams;
-    let { name, ingredients, instructions, author, tags } = recipe;
-    
-    const getRecipeDetails = () => {}
+    let {id} = useParams();
+    const [ recipe, setRecipe ] = useState(recipeStructure)
+    let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe
+        
+    const fetchRecipe = async () => {
+        try{
+            const res = await fetch(`/api/recipe/get/${id}`, {
+                method: "GET"})
+
+            const {data} = await res.json()
+            setRecipe(data)
+
+        } catch(err){
+            console.log(err.message)
+        }
+    }
+
+    useEffect(() => {
+        if(recipe.name === ''){
+            fetchRecipe()
+        }
+    }, [])
 
     return (
         <div className="py-5 px-[5vw] md:px-[7vw] lg:px-[10vw] flex max-md:flex-col min-h-[calc(100vh-100px)] gap-5">
             
-            <div className=" min-h-[80%] w-[50%] flex flex-col justify-center items-center">
-                <img src={sampleImg} />
+            <div className=" min-h-[80%] w-[50%] flex flex-col justify-start items-center mt-10">
+                <img src={image === '' ? sampleImg : image } />
                     
                 {/* <i class="fi fi-sr-star"></i> */}
                 {/* <i className="fi fi-rr-star text-xl"></i> */}
@@ -43,12 +72,12 @@ const RecipePage = () => {
                     <h1 className="font-montserrat text-2xl text-blue-700 font-bold line-clamp-2">{name}</h1>
                     <p className="w-full flex flex-wrap gap-3 mt-2">
                         {
-                            tags.map((tag, i) => {
-                                return <span key={i} className="capitalize rounded-full bg-slate-200 px-3 py-1">{tag}</span>
+                            highlights.map((item, i) => {
+                                return <span key={i} className="capitalize rounded-full bg-slate-200 px-3 py-1">{item}</span>
                             })
                         }
                     </p>
-                    <p className="mt-3"><span className="font-caveat px-2">by</span>{author}</p>
+                    <p className="mt-3"><span className="font-caveat px-2">by</span>{username}</p>
                 </div>
 
                 <hr className="border-grey my-2" />

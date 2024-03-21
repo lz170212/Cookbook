@@ -157,7 +157,7 @@ export default function Home() {
 
   const fetchRecipes = async () => {
     try {
-      const res = await fetch('/api/recipe/all-recipes', {
+      const res = await fetch('/api/recipe/get', {
           method: 'GET'})
 
       const { data } = await res.json();
@@ -165,7 +165,7 @@ export default function Home() {
       setRecipes(data)
 
     } catch(err){
-
+      console.log(err.message)
     }
   }
 
