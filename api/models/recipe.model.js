@@ -24,7 +24,7 @@ const recipeSchema = new mongoose.Schema({
     },
     author: {
         type: Schema.ObjectId,
-        ref: 'users',
+        ref: 'User',
         required: true
     },
     total_collect: {
@@ -40,6 +40,6 @@ const recipeSchema = new mongoose.Schema({
 },{ timestamps: true}
 );
 
-const Recipe = mongoose.model('recipes', recipeSchema);
+const Recipe = mongoose.model('Recipe', recipeSchema);
 
 export default Recipe;
