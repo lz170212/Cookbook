@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 
 const recipeStructure = {
     name: '',
@@ -15,6 +16,10 @@ const RecipePage = () => {
 
     let {id} = useParams();
     const [ recipe, setRecipe ] = useState(recipeStructure)
+    const { currentUser } = useSelector((state) => state.user);
+    const [ isSavedByUser, setIsSavedByUser ] = useState(currentUser.saved_recipes.includes(id))
+
+    console.log(currentUser)
     let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe
         
     const fetchRecipe = async () => {
@@ -30,9 +35,36 @@ const RecipePage = () => {
         }
     }
 
+    const handleSaveRecipe = async () => {
+
+        try{
+            const res = await fetch('/api/recipe/save-recipe', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    recipeId: id,
+                    userId: currentUser._id
+                })
+            })
+
+            const data = await res.json()
+
+            if(data.result === 'success'){
+                // update currentUser Info
+
+            }
+
+        } catch(err){
+            console.log(err.message)
+        }
+
+    }
+
     useEffect(() => {
         if(recipe.name === ''){
-            fetchRecipe()
+            fetchRecipe();
         }
     }, [])
 
@@ -45,8 +77,11 @@ const RecipePage = () => {
                 {/* <i class="fi fi-sr-star"></i> */}
                 {/* <i className="fi fi-rr-star text-xl"></i> */}
                 <button 
-                    className="bg-black text-white font-montserrat font-medium rounded-full mt-5 px-12 py-1 text-xl capitalize hover:bg-slate-200 hover:text-black flex flex-col justify-center items-center"
-                >Save Recipe</button>
+                    className={"font-montserrat font-medium rounded-full mt-5 px-12 py-1 text-xl capitalize " + 
+                    (!isSavedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
+                    "hover:opacity-50 flex flex-col justify-center items-center"}
+                    onClick={handleSaveRecipe}
+                >{ isSavedByUser? "Unsave Recipe" : "Save Recipe" }</button>
             </div>
 
             <div className="w-[50%] px-3 max-md:mt-6">
