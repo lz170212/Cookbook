@@ -1,10 +1,11 @@
 import DefaultUploadImg from '../img/upload-img-icon.jpg';
-import { useState } from 'react';
-import { FaMinusSquare, FaPlusSquare } from 'react-icons/fa'
+import { useEffect, useState } from 'react';
+import { FaMinusSquare } from 'react-icons/fa'
 import { app } from '../firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { Toaster, toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 
 const recipeStructure = {
@@ -24,6 +25,11 @@ const CreateRecipePage = (req, res, next) => {
     const [ recipe, setRecipe ] = useState(recipeStructure)
     const { currentUser } = useSelector((state) => state.user);
     let { name, image, highlights, ingredients, instructions, prep_time } = recipe;
+    let navigate = useNavigate()
+
+    useEffect(() => {
+        setRecipe(recipeStructure)
+    }, [])
     
     const handleImgUpload = (e) => {
         let file = e.target.files[0]
