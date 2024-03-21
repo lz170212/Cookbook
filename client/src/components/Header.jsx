@@ -8,6 +8,8 @@ import {useState} from 'react';
 export default function Header() {
     const { currentUser } = useSelector((state) => state.user);
     const [isOpen, setIsOpen] =useState(false);// for drop down nav
+    const toggle = ()=>setIsOpen(!isOpen);
+    const close =()=>setIsOpen(false);
     return (
         <header className='sticky -top-0 bg-slate-200 shadow-md '>
             <div className='flex justify-between items-center max-w-6xl  mx-auto p-3'>
@@ -29,9 +31,9 @@ export default function Header() {
                             className='rounded-full h-7 w-7 object-cover cursor-pointer'
                             src={currentUser.avatar}
                             alt='personal_page'
-                            onClick= {()=>setIsOpen(!isOpen)}
+                            onClick= {toggle}
                         />
-                        {isOpen &&<DropDownNav></DropDownNav>}
+                        {isOpen &&<DropDownNav closeDropDown={close} ></DropDownNav>}
                         
                     </div>
                 ) : (
