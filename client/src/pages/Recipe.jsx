@@ -57,7 +57,7 @@ const RecipePage = () => {
     return (
         <div className="py-5 px-[5vw] md:px-[7vw] lg:px-[10vw] flex max-md:flex-col min-h-[calc(100vh-100px)] gap-5">
             
-            <div className=" min-h-[80%] w-[50%] flex flex-col justify-start items-center mt-10">
+            <div className=" min-h-[80%] w-[50%] flex flex-col justify-start items-center mt-[5%]">
                 <img src={image === '' ? sampleImg : image } />
                     
                 {/* <i class="fi fi-sr-star"></i> */}
@@ -69,7 +69,7 @@ const RecipePage = () => {
 
             <div className="w-[50%] px-3 max-md:mt-6">
                 <div>
-                    <h1 className="font-montserrat text-2xl text-blue-700 font-bold line-clamp-2">{name}</h1>
+                    <h1 className="font-montserrat text-3xl text-blue-700 font-bold my-5 line-clamp-2">{name}</h1>
                     <p className="w-full flex flex-wrap gap-3 mt-2">
                         {
                             highlights.map((item, i) => {
