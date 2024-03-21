@@ -22,12 +22,20 @@ const RecipePage = () => {
 
     let { id } = useParams;
     let { name, ingredients, instructions, author, tags } = recipe;
+    
+    const getRecipeDetails = () => {}
 
     return (
         <div className="py-5 px-[5vw] md:px-[7vw] lg:px-[10vw] flex max-md:flex-col min-h-[calc(100vh-100px)] gap-5">
             
-            <div className=" min-h-[80%] w-[50%] flex items-center">
+            <div className=" min-h-[80%] w-[50%] flex flex-col justify-center items-center">
                 <img src={sampleImg} />
+                    
+                {/* <i class="fi fi-sr-star"></i> */}
+                {/* <i className="fi fi-rr-star text-xl"></i> */}
+                <button 
+                    className="bg-slate-200 text-black rounded-full mt-5 px-12 py-1 text-xl capitalize hover:bg-opacity-80 flex flex-col justify-center items-center"
+                >Save to my favorite</button>
             </div>
 
             <div className="w-[50%] px-3 max-md:mt-6">
@@ -36,7 +44,7 @@ const RecipePage = () => {
                     <p className="w-full flex flex-wrap gap-3 mt-2">
                         {
                             tags.map((tag, i) => {
-                                return <p key={i} className="capitalize rounded-full bg-slate-200 px-3 py-1">{tag}</p>
+                                return <span key={i} className="capitalize rounded-full bg-slate-200 px-3 py-1">{tag}</span>
                             })
                         }
                     </p>
