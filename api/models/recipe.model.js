@@ -16,7 +16,6 @@ const recipeSchema = new mongoose.Schema({
     },
     ingredients: {
         type: [String],
-        // string should consists of two parts "desired amount " or " xx unit " + "ingredient name"
         required: true
     },
     instructions: {
@@ -25,13 +24,16 @@ const recipeSchema = new mongoose.Schema({
     },
     author: {
         type: Schema.ObjectId,
-        ref: 'User'
+        ref: 'users',
+        required: true
     },
     total_collect: {
-        type: Number
+        type: Number,
+        default: 0
     },
     prep_time: {
-        type: Number
+        type: Number,
+        required: true
     },
 
     
