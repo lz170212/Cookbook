@@ -63,8 +63,8 @@ const RecipePage = () => {
                 {/* <i class="fi fi-sr-star"></i> */}
                 {/* <i className="fi fi-rr-star text-xl"></i> */}
                 <button 
-                    className="bg-slate-200 text-black rounded-full mt-5 px-12 py-1 text-xl capitalize hover:bg-opacity-80 flex flex-col justify-center items-center"
-                >Save to my favorite</button>
+                    className="bg-black text-white font-montserrat font-medium rounded-full mt-5 px-12 py-1 text-xl capitalize hover:bg-slate-200 hover:text-black flex flex-col justify-center items-center"
+                >Save Recipe</button>
             </div>
 
             <div className="w-[50%] px-3 max-md:mt-6">
