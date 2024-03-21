@@ -1,23 +1,5 @@
 import { useParams } from "react-router-dom";
-import sampleImg from "../img/sample1.jpeg"
 import { useState, useEffect } from "react";
-
-let recipe = {
-    name: 'Crispy Salt and Pepper Potatoes',
-    ingredients: ['2 large egg whites', '1 pound new potatoes (about 1 inch in diameter)', '2 teaspoons kosher salt', '¾ teaspoon finely ground black pepper', '1 teaspoon finely chopped rosemary', '1 teaspoon finely chopped thyme', '1 teaspoon finely chopped parsley'],
-    instructions: [
-      'Preheat oven to 400°F and line a rimmed baking sheet with parchment.', 
-      'In a large bowl, whisk the egg whites until foamy (there shouldn\'t be any liquid whites in the bowl).', 
-      'Add the potatoes and toss until they are well coated with the egg whites, then transfer to a strainer or colander and let the excess whites drain.', 
-      'Season the potatoes with the salt, pepper, and herbs.', 
-      'Scatter the potatoes on the baking sheet (make sure they/’re not touching) and roast until the potatoes are very crispy and tender when poked with a knife, 15 to 20 minutes (depending on the size of the potatoes).', 
-      'Transfer to a bowl and serve.'
-    ],
-    image: 'crispy-salt-and-pepper-potatoes-dan-kluger',
-    author: 'Andrew Huberman',
-    cookTime: 40,
-    tags: ['low carb', 'lunch', 'egg', 'potato']
-}
 
 const recipeStructure = {
     name: '',
@@ -58,7 +40,7 @@ const RecipePage = () => {
         <div className="py-5 px-[5vw] md:px-[7vw] lg:px-[10vw] flex max-md:flex-col min-h-[calc(100vh-100px)] gap-5">
             
             <div className=" min-h-[80%] w-[50%] flex flex-col justify-start items-center mt-[5%]">
-                <img src={image === '' ? sampleImg : image } />
+                <img src={ image } />
                     
                 {/* <i class="fi fi-sr-star"></i> */}
                 {/* <i className="fi fi-rr-star text-xl"></i> */}
