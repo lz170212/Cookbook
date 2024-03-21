@@ -10,21 +10,23 @@ import { Link } from 'react-router-dom';
 
 const imgs = [sampleImg1, sampleImg2, sampleImg3, sampleImg4, sampleImg5, sampleImg6, sampleImg7 ]
 
-const RecipeCard = ({ name, ingredients, cookTime = 30, index }) => {
+const RecipeCard = ({ recipe }) => {
+
+    let { name, image, ingredients, prep_time } = recipe;
 
     let id = "0001"
 
     return (
-        <Link to={`/recipe/${id}`}>
+        <Link to={`/`}>
             <div className="border-2 w-[350px] h-[350px] rounded-md">
                 <div className='h-[60%] w-full flex items-center justify-center'>
-                    <img src={imgs[index % 7]} className='h-full w-full'/>
+                    <img src={image} className='h-full w-full'/>
                 </div>
                 
                 <div>
                     <p className='font-gelasio text-xl line-clamp-1 text-blue-500 text-center my-3'>{name}</p>
                     <p className='line-clamp-2 px-3 mb-1'><span className='font-bold'>Ingredients:</span> {ingredients}</p>
-                    <p className='px-3'><FaClock className='inline-block'/> {cookTime}min</p>
+                    <p className='px-3'><FaClock className='inline-block'/> {prep_time}min</p>
                 </div>
             </div>
         </Link>
