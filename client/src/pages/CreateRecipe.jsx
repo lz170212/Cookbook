@@ -175,20 +175,20 @@ const CreateRecipePage = (req, res, next) => {
                     </textarea>
 
                     <div>
-                        <label className='text-xl font-medium text-blue-600'>Estimated Prep Time</label>
+                        <label className='text-xl font-medium text-blue-600'>⏳ Estimated Prep Time</label>
                         <select className='w-full h-14 rounded-md mt-2' onChange={(e) => {setRecipe({ ...recipe, prep_time: e.target.value})}}>
                             <option>please select</option>
-                            <option value={15}>15 min</option>
-                            <option value={30}>30 min</option>
-                            <option value={45}>45 min</option>
-                            <option value={60}>60 min</option>
+                            <option value={15}>⏰ 15 min</option>
+                            <option value={30}>⏰ 30 min</option>
+                            <option value={45}>⏰ 45 min</option>
+                            <option value={60}>⏰ 60 min</option>
                         </select>
                     </div>
                 </div>
 
                 <div className="min-w-[50%] flex flex-col gap-10">
                     <div>
-                        <p className='text-xl font-medium text-blue-600'>Highlights</p>
+                        <p className='text-xl font-medium text-blue-600'>💡 Highlights</p>
                         <div className='mt-3'>
                             {
                                 highlightOptions.map((item, i) => {
@@ -204,7 +204,7 @@ const CreateRecipePage = (req, res, next) => {
                     </div>
 
                     <div className='my-3'>
-                        <p className='text-xl font-medium text-blue-600'>Ingredients</p>
+                        <p className='text-xl font-medium text-blue-600'>🥕 Ingredients</p>
 
                         <p className='font-gelasio italic my-1 text-gray-500'>Please use numeric numbers for the amount. Eg. 1 medium carrots. </p>
                     
@@ -235,7 +235,7 @@ const CreateRecipePage = (req, res, next) => {
                     </div>
 
                     <div className='my-3'>
-                        <p className='text-xl font-medium text-blue-600'>Instructions</p>
+                        <p className='text-xl font-medium text-blue-600'>📝 Instructions</p>
                     
                         {
                             instructions.map((item, i) => {
