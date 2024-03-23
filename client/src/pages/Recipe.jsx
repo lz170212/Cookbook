@@ -81,7 +81,7 @@ const RecipePage = () => {
                     (!isSavedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
                     "hover:opacity-50 flex flex-col justify-center items-center"}
                     onClick={handleSaveRecipe}
-                >{ isSavedByUser? "Unsave Recipe" : "Save Recipe" }</button>
+                >{ isSavedByUser? "Unsave Recipe" : "🥰 Save Recipe" }</button>
             </div>
 
             <div className="w-[50%] px-3 max-md:mt-6">
@@ -101,16 +101,16 @@ const RecipePage = () => {
 
                 <div>
                     
-                    <p className="font-bold my-2">Ingredients</p>
+                    <p className="font-bold my-2">🥕 Ingredients</p>
                     <ul>
                         {
                             ingredients.map((ingredient, i) => {
-                                return <li key={i} className="pl-3">{ingredient}</li>
+                                return <li key={i} className="pl-3"><span className="font-bold text-purple-500">{i+1}. </span> {ingredient}</li>
                             })
                         }
                     </ul>
 
-                    <p className="font-bold my-2">Step by Step Instructions:</p>
+                    <p className="font-bold my-2">🥘 Step by Step Instructions:</p>
                     <ol>
                         {
                             instructions.map((step, i) => {

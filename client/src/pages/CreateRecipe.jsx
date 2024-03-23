@@ -178,10 +178,13 @@ const CreateRecipePage = (req, res, next) => {
                         <label className='text-xl font-medium text-blue-600'>⏳ Estimated Prep Time</label>
                         <select className='w-full h-14 rounded-md mt-2' onChange={(e) => {setRecipe({ ...recipe, prep_time: e.target.value})}}>
                             <option>please select</option>
-                            <option value={15}>⏰ 15 min</option>
-                            <option value={30}>⏰ 30 min</option>
-                            <option value={45}>⏰ 45 min</option>
-                            <option value={60}>⏰ 60 min</option>
+                            <option value={5}>⏰ 5 mins</option>
+                            <option value={10}>⏰ 10 mins</option>
+                            <option value={15}>⏰ 15 mins</option>
+                            <option value={20}>⏰ 20 mins</option>
+                            <option value={30}>⏰ 30 mins</option>
+                            <option value={45}>⏰ 45 mins</option>
+                            <option value={60}>⏰ 60 mins</option>
                         </select>
                     </div>
                 </div>
