@@ -13,7 +13,7 @@ export const createRecipe = async (req, res, next) => {
 }
 
 export const getAllRecipes = async (req, res, next) => {
-    let maxLimit = 6;
+    let maxLimit = 20;
     try{
         let data = await Recipe.find()
             .populate('author', "username")
