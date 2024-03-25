@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken";
+import { errorHandler } from './error.js';
 
 export const verifyToken = (req, res, next) => {
   const token = req.cookies.access_token; //create at signin //need to use cookie-parser
+  console.log(token)
   if (!token) return next(errorHandler(401, "Unauthorized"));
   //jwt verify token and extract the user id ? and append to req
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {

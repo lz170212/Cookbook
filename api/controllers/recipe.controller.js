@@ -2,8 +2,9 @@ import Recipe from '../models/recipe.model.js';
 import User from '../models/user.model.js'
 
 export const createRecipe = async (req, res, next) => {
-
-    const newRecipe = new Recipe({...req.body})
+    
+console.log('here')
+    const newRecipe = new Recipe({...req.body, author: req.user.id })
     
     try {
         let result = await newRecipe.save()
@@ -36,9 +37,11 @@ export const getRecipe = async (req, res, next) => {
 }
 
 export const saveRecipe = async (req, res, next) => {
+    // console.log('here')
+    
     try{
-        let { userId, recipeId } = req.body;
-        await User.findOneAndUpdate({_id: userId}, { $push: {"saved_recipes": recipeId}})
+        let { recipeId } = req.body;
+        await User.findOneAndUpdate({_id: req.user.id}, { $addToSet: {"saved_recipes": recipeId}})
        
         await Recipe.findOneAndUpdate({ _id: recipeId}, { $inc: {"total_collect": 1}})
 
