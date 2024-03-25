@@ -1,7 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import RecipeCard from '../components/RecipeCard'
 
 export default function SavedDish() {
+
+  const fetchCollectedRecipes = async () => {
+    try{
+      const res = await fetch('/api/recipe/saved-recipes')
+      const { saved_recipes } = await res.json()
+      setRecipes(saved_recipes)
+
+    } catch(err){
+      console.log(err.message)
+    }
+  }
+
+  const [ recipes, setRecipes ] = useState([])
+
+  useEffect(() => {
+    fetchCollectedRecipes()
+  }, [])
+
   return (
-    <div>SavedDish</div>
+    <div className='w-full px-10 my-10 flex gap-10 justify-start flex-wrap'>
+      {
+        recipes.length ? 
+          recipes.map((recipe, i) => {
+            return <RecipeCard key={i} recipe={recipe} />
+          })
+          : 
+          "This user has no saved recipes"
+      }
+    </div>
   )
 }

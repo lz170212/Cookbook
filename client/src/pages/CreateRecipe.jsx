@@ -4,7 +4,6 @@ import { FaMinusSquare } from 'react-icons/fa'
 import { app } from '../firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { Toaster, toast } from 'react-hot-toast';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -23,7 +22,6 @@ const highlightOptions = ['low carb', 'high protein', 'vegetarian', 'under 500 c
 const CreateRecipePage = (req, res, next) => {
 
     const [ recipe, setRecipe ] = useState(recipeStructure)
-    const { currentUser } = useSelector((state) => state.user);
     let { name, image, highlights, ingredients, instructions, prep_time } = recipe;
     let navigate = useNavigate()
 
@@ -48,7 +46,6 @@ const CreateRecipePage = (req, res, next) => {
                     .catch(err => console.log(48, err.message))
             })
 
-        console.log(recipe.image)
     }
 
     const handleAddRow = (key) => {
@@ -116,7 +113,6 @@ const CreateRecipePage = (req, res, next) => {
         }
 
         let loadingToast = toast.loading('saving recipe...')
-        setRecipe({ ...recipe, author: currentUser._id})
 
         try {
             const res = await fetch('/api/recipe/create-recipe', {

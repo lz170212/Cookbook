@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
 
 const recipeStructure = {
     name: '',
@@ -16,18 +15,16 @@ const RecipePage = () => {
 
     let {id} = useParams();
     const [ recipe, setRecipe ] = useState(recipeStructure)
-    const { currentUser } = useSelector((state) => state.user);
-    const [ isSavedByUser, setIsSavedByUser ] = useState(currentUser.saved_recipes.includes(id))
+    const [ isCollectedByUser, setIsCollectedByUser ] = useState(false)
 
-    console.log(currentUser)
-    let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe
+    let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe;
         
     const fetchRecipe = async () => {
         try{
             const res = await fetch(`/api/recipe/get/${id}`, {
                 method: "GET"})
 
-            const {data} = await res.json()
+            const { data } = await res.json()
             setRecipe(data)
 
         } catch(err){
@@ -35,26 +32,25 @@ const RecipePage = () => {
         }
     }
 
-    const handleSaveRecipe = async () => {
+    const handleCollectRecipe = async (e) => {
+
+        let action = e.target.innerHTML
 
         try{
-            const res = await fetch('/api/recipe/save-recipe', {
+            const res = await fetch('/api/recipe/collect-recipe', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     recipeId: id,
-                    userId: currentUser._id
+                    action
                 })
             })
+ 
+            const result = await res.json() 
+            setIsCollectedByUser( result === 'unsaved' ? false : true )         
 
-            const data = await res.json()
-
-            if(data.result === 'success'){
-                // update currentUser Info
-
-            }
 
         } catch(err){
             console.log(err.message)
@@ -62,26 +58,41 @@ const RecipePage = () => {
 
     }
 
+    const checkIfCollected = async () => {
+        const res = await fetch('/api/recipe/is-already-collected', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                recipeId: id,
+            })
+        })
+
+        const result = await res.json() 
+        setIsCollectedByUser(result)
+    }
+
     useEffect(() => {
-        if(recipe.name === ''){
-            fetchRecipe();
-        }
-    }, [])
+        checkIfCollected();
+        fetchRecipe()
+    }, [id])
 
     return (
         <div className="py-5 px-[5vw] md:px-[7vw] lg:px-[10vw] flex max-md:flex-col min-h-[calc(100vh-100px)] gap-5">
             
             <div className=" min-h-[80%] w-[50%] flex flex-col justify-start items-center mt-[5%]">
-                <img src={ image } />
+                <img src={ image } className="max-w-[450px]" />
                     
                 {/* <i class="fi fi-sr-star"></i> */}
                 {/* <i className="fi fi-rr-star text-xl"></i> */}
                 <button 
                     className={"font-montserrat font-medium rounded-full mt-5 px-12 py-1 text-xl capitalize " + 
-                    (!isSavedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
+                    (!isCollectedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
                     "hover:opacity-50 flex flex-col justify-center items-center"}
-                    onClick={handleSaveRecipe}
-                >{ isSavedByUser? "Unsave Recipe" : "🥰 Save Recipe" }</button>
+                    onClick={(e) => { handleCollectRecipe(e)}}
+                >{ isCollectedByUser ? "Unsave Recipe" : "🥰 Save Recipe" }</button>
+
             </div>
 
             <div className="w-[50%] px-3 max-md:mt-6">
