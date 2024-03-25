@@ -22,12 +22,10 @@ const RecipePage = () => {
 
     let {id} = useParams();
     const [ recipe, setRecipe ] = useState(recipeStructure)
-    const { currentUser } = useSelector((state) => state.user);
-    const [ isSavedByUser, setIsSavedByUser ] = useState(currentUser.saved_recipes ? currentUser.saved_recipes.includes(id) : false)
+    const [ isSavedByUser, setIsSavedByUser ] = useState(currentUser ? currentUser.saved_recipes.includes(id) : false)
 
     const dispatch = useDispatch()
 
-    console.log(currentUser)
     let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe
         
     const fetchRecipe = async () => {
@@ -44,7 +42,7 @@ const RecipePage = () => {
     }
 
     const handleSaveRecipe = async () => {
-        
+
         try{
             dispatch(updateUserStart())
             const res = await fetch('/api/recipe/save-recipe', {
@@ -54,7 +52,6 @@ const RecipePage = () => {
                 },
                 body: JSON.stringify({
                     recipeId: id,
-                    userId: currentUser._id
                 })
             })
 
