@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
-import {
-    updateUserStart,
-    updateUserFailure, 
-    updateUserSuccess
-} from '../redux/user/userSlice'
-import { useDispatch } from "react-redux";
+// import { useSelector } from 'react-redux';
+// import {
+//     updateUserStart,
+//     updateUserFailure, 
+//     updateUserSuccess
+// } from '../redux/user/userSlice'
+// import { useDispatch } from "react-redux";
 
 const recipeStructure = {
     name: '',
@@ -22,9 +22,9 @@ const RecipePage = () => {
 
     let {id} = useParams();
     const [ recipe, setRecipe ] = useState(recipeStructure)
-    const [ isSavedByUser, setIsSavedByUser ] = useState(currentUser ? currentUser.saved_recipes.includes(id) : false)
+    const [ isCollectedByUser, setIsCollectedByUser ] = useState(false)
 
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
 
     let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe
         
@@ -41,26 +41,23 @@ const RecipePage = () => {
         }
     }
 
-    const handleSaveRecipe = async () => {
+    const handleCollectRecipe = async ({ collecting }) => {
 
         try{
-            dispatch(updateUserStart())
-            const res = await fetch('/api/recipe/save-recipe', {
+            const res = await fetch('/api/recipe/collect-recipe', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     recipeId: id,
+                    collecting
                 })
             })
 
-            const data = await res.json()
+            const result = await res.json() 
+            setIsCollectedByUser(result)           
 
-            if(data.success){
-                // update currentUser Info
-
-            }
 
         } catch(err){
             console.log(err.message)
@@ -68,7 +65,23 @@ const RecipePage = () => {
 
     }
 
+    const checkIfCollected = async () => {
+        const res = await fetch('/api/recipe/is-already-collected', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                recipeId: id,
+            })
+        })
+        setIsCollectedByUser(res)
+    }
+
     useEffect(() => {
+        if(isCollectedByUser === null){
+            checkIfCollected()
+        }
         if(recipe.name === ''){
             fetchRecipe();
         }
@@ -84,10 +97,12 @@ const RecipePage = () => {
                 {/* <i className="fi fi-rr-star text-xl"></i> */}
                 <button 
                     className={"font-montserrat font-medium rounded-full mt-5 px-12 py-1 text-xl capitalize " + 
-                    (!isSavedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
+                    (!isCollectedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
                     "hover:opacity-50 flex flex-col justify-center items-center"}
-                    onClick={handleSaveRecipe}
-                >{ isSavedByUser? "Unsave Recipe" : "🥰 Save Recipe" }</button>
+                    onClick={() => { handleCollectRecipe({
+                        collecting: !isCollectedByUser})}}
+                >{ isCollectedByUser ? "Unsave Recipe" : "🥰 Save Recipe" }</button>
+
             </div>
 
             <div className="w-[50%] px-3 max-md:mt-6">
