@@ -33,7 +33,7 @@ const RecipePage = () => {
             const res = await fetch(`/api/recipe/get/${id}`, {
                 method: "GET"})
 
-            const {data} = await res.json()
+            const { data } = await res.json()
             setRecipe(data)
 
         } catch(err){
@@ -41,7 +41,9 @@ const RecipePage = () => {
         }
     }
 
-    const handleCollectRecipe = async ({ collecting }) => {
+    const handleCollectRecipe = async (e) => {
+
+        let action = e.target.innerHTML
 
         try{
             const res = await fetch('/api/recipe/collect-recipe', {
@@ -51,12 +53,12 @@ const RecipePage = () => {
                 },
                 body: JSON.stringify({
                     recipeId: id,
-                    collecting
+                    action
                 })
             })
-
+ 
             const result = await res.json() 
-            setIsCollectedByUser(result)           
+            setIsCollectedByUser( result === 'unsaved' ? false : true )         
 
 
         } catch(err){
@@ -75,17 +77,15 @@ const RecipePage = () => {
                 recipeId: id,
             })
         })
-        setIsCollectedByUser(res)
+
+        const result = await res.json() 
+        setIsCollectedByUser(result)
     }
 
     useEffect(() => {
-        if(isCollectedByUser === null){
-            checkIfCollected()
-        }
-        if(recipe.name === ''){
-            fetchRecipe();
-        }
-    }, [])
+        checkIfCollected();
+        fetchRecipe()
+    }, [id])
 
     return (
         <div className="py-5 px-[5vw] md:px-[7vw] lg:px-[10vw] flex max-md:flex-col min-h-[calc(100vh-100px)] gap-5">
@@ -99,8 +99,7 @@ const RecipePage = () => {
                     className={"font-montserrat font-medium rounded-full mt-5 px-12 py-1 text-xl capitalize " + 
                     (!isCollectedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
                     "hover:opacity-50 flex flex-col justify-center items-center"}
-                    onClick={() => { handleCollectRecipe({
-                        collecting: !isCollectedByUser})}}
+                    onClick={(e) => { handleCollectRecipe(e)}}
                 >{ isCollectedByUser ? "Unsave Recipe" : "🥰 Save Recipe" }</button>
 
             </div>
