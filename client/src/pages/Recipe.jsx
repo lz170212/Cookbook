@@ -1,12 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-// import { useSelector } from 'react-redux';
-// import {
-//     updateUserStart,
-//     updateUserFailure, 
-//     updateUserSuccess
-// } from '../redux/user/userSlice'
-// import { useDispatch } from "react-redux";
 
 const recipeStructure = {
     name: '',
@@ -24,9 +17,7 @@ const RecipePage = () => {
     const [ recipe, setRecipe ] = useState(recipeStructure)
     const [ isCollectedByUser, setIsCollectedByUser ] = useState(false)
 
-    // const dispatch = useDispatch()
-
-    let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe
+    let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe;
         
     const fetchRecipe = async () => {
         try{
