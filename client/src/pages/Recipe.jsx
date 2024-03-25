@@ -1,6 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector } from 'react-redux';
+import {
+    updateUserStart,
+    updateUserFailure, 
+    updateUserSuccess
+} from '../redux/user/userSlice'
+import { useDispatch } from "react-redux";
 
 const recipeStructure = {
     name: '',
@@ -17,7 +23,9 @@ const RecipePage = () => {
     let {id} = useParams();
     const [ recipe, setRecipe ] = useState(recipeStructure)
     const { currentUser } = useSelector((state) => state.user);
-    const [ isSavedByUser, setIsSavedByUser ] = useState(currentUser.saved_recipes.includes(id))
+    const [ isSavedByUser, setIsSavedByUser ] = useState(currentUser.saved_recipes ? currentUser.saved_recipes.includes(id) : false)
+
+    const dispatch = useDispatch()
 
     console.log(currentUser)
     let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe
@@ -36,8 +44,9 @@ const RecipePage = () => {
     }
 
     const handleSaveRecipe = async () => {
-
+        
         try{
+            dispatch(updateUserStart())
             const res = await fetch('/api/recipe/save-recipe', {
                 method: "POST",
                 headers: {
@@ -51,7 +60,7 @@ const RecipePage = () => {
 
             const data = await res.json()
 
-            if(data.result === 'success'){
+            if(data.success){
                 // update currentUser Info
 
             }
@@ -72,7 +81,7 @@ const RecipePage = () => {
         <div className="py-5 px-[5vw] md:px-[7vw] lg:px-[10vw] flex max-md:flex-col min-h-[calc(100vh-100px)] gap-5">
             
             <div className=" min-h-[80%] w-[50%] flex flex-col justify-start items-center mt-[5%]">
-                <img src={ image } />
+                <img src={ image } className="max-w-[450px]" />
                     
                 {/* <i class="fi fi-sr-star"></i> */}
                 {/* <i className="fi fi-rr-star text-xl"></i> */}
