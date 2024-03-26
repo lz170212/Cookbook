@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const recipeStructure = {
@@ -94,13 +94,13 @@ const RecipePage = () => {
                 >{ isCollectedByUser ? "Unsave Recipe" : "🥰 Save Recipe" }</button>
                 
                 {   
-                    isCollectedByUser && !is_customized &&
-                    <button 
-                        className={"font-montserrat font-medium rounded-full w-[300px] mt-5 px-12 py-2 text-xl capitalize " + 
-                        (!isCollectedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
-                        "hover:opacity-50 flex flex-col justify-center items-center"}
-                        onClick={(e) => { handleCollectRecipe(e)}}
-                    >Customize Recipe</button>
+                    isCollectedByUser &&
+                    <Link to={`/create-recipe/${id}`} >
+                        <button 
+                            className={"font-montserrat font-medium rounded-full w-[300px] mt-5 px-12 py-2 text-xl capitalize bg-black/80 text-white " +
+                            "hover:opacity-50 flex flex-col justify-center items-center"}
+                        >Customize Recipe</button>
+                    </Link>
                 }
 
             </div>

@@ -4,7 +4,7 @@ import { FaMinusSquare } from 'react-icons/fa'
 import { app } from '../firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { Toaster, toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
 const recipeStructure = {
@@ -14,20 +14,38 @@ const recipeStructure = {
     highlights: [],
     ingredients: ['', '', ''],
     instructions: ['', '', ''],
-    prep_time: ''
+    prep_time: '',
+    is_customized: false,
 }
 const highlightOptions = ['low carb', 'high protein', 'vegetarian', 'under 500 calories', 'under 30min', 'budget friendly', 'meat lover']
 
 
 const CreateRecipePage = (req, res, next) => {
 
+    let {id} = useParams()
     const [ recipe, setRecipe ] = useState(recipeStructure)
     let { name, image, highlights, ingredients, instructions, prep_time } = recipe;
     let navigate = useNavigate()
 
+    const fetchRecipe = async () => {
+        try{
+            const res = await fetch(`/api/recipe/get/${id}`, {
+                method: "GET"})
+    
+            const { data } = await res.json()
+            setRecipe(data)
+            console.log(data)
+    
+        } catch(err){
+            console.log(err.message)
+        }
+      }
+
     useEffect(() => {
-        setRecipe(recipeStructure)
-    }, [])
+        if(id){
+            fetchRecipe()
+        }
+    }, [id])
     
     const handleImgUpload = (e) => {
         let file = e.target.files[0]
@@ -51,12 +69,6 @@ const CreateRecipePage = (req, res, next) => {
     const handleAddRow = (key) => {
         let list = recipe[key]
         setRecipe({ ...recipe, [key]: [ ...list , '' ]})
-    }
-
-    const handleRemoveRow = (key, i) => {
-        let list = recipe[key]
-        list.splice(i, 1)
-        setRecipe({...recipe, [key]: list})
     }
 
     const handleHighlightsChange = (item) => {
@@ -113,6 +125,10 @@ const CreateRecipePage = (req, res, next) => {
         }
 
         let loadingToast = toast.loading('saving recipe...')
+        
+        if(id){
+            recipe.is_customized = true
+        }
 
         try {
             const res = await fetch('/api/recipe/create-recipe', {
@@ -134,7 +150,10 @@ const CreateRecipePage = (req, res, next) => {
             toast.dismiss(loadingToast)
             toast.success("Saved 👍")
             console.log(data)
-            navigate('/');
+            setTimeout(() => {
+                navigate('/');
+            }, 500);
+            
 
         } catch(err){
             toast.dismiss(loadingToast)
@@ -147,7 +166,7 @@ const CreateRecipePage = (req, res, next) => {
     return (
         <main className='font-montserrat max-w-[90vw] flex flex-col mx-auto  py-4 px-[5vw] md:px-[7vw] lg:px-[10vw]'>
             <Toaster />
-            <h1 className="font-medium text-3xl text-center my-6">Create A Recipe</h1>
+            <h1 className="font-medium text-3xl text-center my-6">{id ? "Edit" : "Create"} Recipe</h1>
 
             <form className="flex max-md:flex-col gap-16 lg:gap-28 mt-10 justify-center">
                 <div className="flex flex-col gap-10 ">
@@ -172,7 +191,7 @@ const CreateRecipePage = (req, res, next) => {
 
                     <div>
                         <label className='text-xl font-medium text-blue-600'>⏳ Estimated Prep Time</label>
-                        <select className='w-full h-14 rounded-md mt-2' onChange={(e) => {setRecipe({ ...recipe, prep_time: e.target.value})}}>
+                        <select className='w-full h-14 rounded-md mt-2' value={prep_time} onChange={(e) => {setRecipe({ ...recipe, prep_time: e.target.value})}}>
                             <option>please select</option>
                             <option value={5}>⏰ 5 mins</option>
                             <option value={10}>⏰ 10 mins</option>
@@ -193,7 +212,7 @@ const CreateRecipePage = (req, res, next) => {
                                 highlightOptions.map((item, i) => {
                                     return (
                                         <div key={i} className='flex gap-2'>
-                                            <input type="checkbox" id={item} className='w-5' onChange={() => handleHighlightsChange(item)}/>
+                                            <input type="checkbox" id={item} className='w-5' checked={highlights.includes(item)} onChange={() => handleHighlightsChange(item)}/>
                                             <span className='capitalize'>{item}</span>
                                         </div>
                                     )

@@ -42,6 +42,10 @@ const recipeSchema = new mongoose.Schema({
     customized_from: {
         type: Schema.ObjectId,
         ref: 'Recipe'
+    },
+    customized_by: {
+        type: Schema.ObjectId,
+        ref: 'User'
     }
 
     
