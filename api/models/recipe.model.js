@@ -35,6 +35,14 @@ const recipeSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    is_customized: {
+        type: Boolean,
+        default: false
+    },
+    customized_from: {
+        type: Schema.ObjectId,
+        ref: 'Recipe'
+    }
 
     
 },{ timestamps: true}

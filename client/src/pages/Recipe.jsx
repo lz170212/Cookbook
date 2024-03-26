@@ -8,7 +8,9 @@ const recipeStructure = {
     highlights: [],
     ingredients: [],
     instructions: [],
-    prep_time: ''
+    prep_time: '',
+    is_customized: false,
+    customized_from: ''
 }
 
 const RecipePage = () => {
@@ -17,7 +19,7 @@ const RecipePage = () => {
     const [ recipe, setRecipe ] = useState(recipeStructure)
     const [ isCollectedByUser, setIsCollectedByUser ] = useState(false)
 
-    let { name, author: {username}, image, highlights, ingredients, instructions, prep_time } = recipe;
+    let { name, author: {username}, image, highlights, ingredients, instructions, prep_time, is_customized, customized_from } = recipe;
         
     const fetchRecipe = async () => {
         try{
@@ -84,14 +86,22 @@ const RecipePage = () => {
             <div className=" min-h-[80%] w-[50%] flex flex-col justify-start items-center mt-[5%]">
                 <img src={ image } className="max-w-[450px]" />
                     
-                {/* <i class="fi fi-sr-star"></i> */}
-                {/* <i className="fi fi-rr-star text-xl"></i> */}
                 <button 
-                    className={"font-montserrat font-medium rounded-full mt-5 px-12 py-1 text-xl capitalize " + 
+                    className={"font-montserrat font-medium rounded-full w-[300px] mt-5 px-12 py-2 text-xl capitalize " + 
                     (!isCollectedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
                     "hover:opacity-50 flex flex-col justify-center items-center"}
                     onClick={(e) => { handleCollectRecipe(e)}}
                 >{ isCollectedByUser ? "Unsave Recipe" : "🥰 Save Recipe" }</button>
+                
+                {   
+                    isCollectedByUser && !is_customized &&
+                    <button 
+                        className={"font-montserrat font-medium rounded-full w-[300px] mt-5 px-12 py-2 text-xl capitalize " + 
+                        (!isCollectedByUser ? "bg-black/80 text-white " : "bg-slate-200 textblack ") +
+                        "hover:opacity-50 flex flex-col justify-center items-center"}
+                        onClick={(e) => { handleCollectRecipe(e)}}
+                    >Customize Recipe</button>
+                }
 
             </div>
 
