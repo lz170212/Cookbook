@@ -120,7 +120,10 @@ const RecipePage = () => {
 
                 <hr className="border-grey my-2" />
 
+                {is_customized && <p className="text-center italic text-blue-400 font-medium">This is your customized version.</p> }
+
                 <div>
+                    <p className="font-bold my-2">⏰ Prep Time: {prep_time} mins</p>
                     
                     <p className="font-bold my-2">🥕 Ingredients</p>
                     <ul>
