@@ -2,14 +2,45 @@ import Recipe from '../models/recipe.model.js';
 import User from '../models/user.model.js'
 
 export const createRecipe = async (req, res, next) => {
-    const newRecipe = new Recipe({...req.body, author: req.user.id })
+
+    const recipeObj = {...req.body}
     
-    try {
-        let result = await newRecipe.save()
-        res.status(201).json("New Recipe created successfully");
-    } catch( err ){
-        next(err)
+    if (!recipeObj.is_customized){ // new recipe, just create a new doc
+        try {
+                const newRecipe = new Recipe({...req.body, author: req.user.id })
+                await newRecipe.save()
+                res.status(201).json("New Recipe created!");
+            } catch( err ){
+                next(err)
+            }
+    } else { // 分两种情况
+        if(!recipeObj.customized_from){ // 1. customized from original recipe, should create new doc
+            // console.log('reached line 17')
+            let { is_customized, _id: customized_from, name, image, highlights, ingredients, instructions, author, prep_time } = recipeObj;
+            author = author._id
+            
+            try{
+                const newRecipe = new Recipe({ is_customized, customized_from, name, image, highlights, ingredients, instructions, author, prep_time, customized_by: req.user.id})                
+                await newRecipe.save()
+                await User.findOneAndUpdate({ _id: req.user.id }, { $addToSet: { "saved_recipes": newRecipe._id }})
+                await User.findOneAndUpdate({ _id: req.user.id }, { $pull: { "saved_recipes": customized_from}} )
+                    
+                res.status(201).json("Customized Recipe saved!");
+            
+            } catch(err){
+                next(err)
+            }
+
+        } else { // 2. customized from customized copy, just update 
+            let { _id, name, image, highlights, ingredients, instructions, prep_time } = recipeObj;
+
+            await Recipe.findOneAndUpdate({ _id }, { name, image, highlights, ingredients, instructions, prep_time })
+
+            res.status(201).json("Customized Recipe Updated!");
+        }
+
     }
+
 }
 
 export const getAllRecipes = async (req, res, next) => {
@@ -56,8 +87,6 @@ export const collectRecipe = async (req, res, next) => {
 export const checkIfCollected = async (req, res, next) => {
     let {recipeId} = req.body
 
-    // console.log(recipeId, req.user)
-    
     try {
         let user = await User.findOne({_id: req.user.id})
         let result = user.saved_recipes.includes(recipeId)

@@ -28,7 +28,7 @@ export default function SavedDish() {
             return <RecipeCard key={i} recipe={recipe} />
           })
           : 
-          "This user has no saved recipes"
+          <p className='font-gelasio font-medium'>You haven't collected any recipes yet ...</p>
       }
     </div>
   )

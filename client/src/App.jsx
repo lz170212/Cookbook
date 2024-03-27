@@ -10,6 +10,7 @@ import WeeklyMenu from './pages/WeeklyMenu';
 import Profile from './pages/Profile';
 import ShoppingList from './pages/ShoppingList';
 import CreateRecipePage from './pages/CreateRecipe';
+import PageNotFound from './pages/404';
 
 export default function App() {
   return (
@@ -20,13 +21,17 @@ export default function App() {
         <Route path='/recipe/:id' element={<RecipePage />} />
         <Route path='/sign-in' element={<SignIn/>}/>
         <Route path='/sign-up' element={<SignUp/>}/>
+        
         <Route element={<PrivateRoute/>}>
           <Route path='/saved-dish' element={<SavedDish/>}/>
           <Route path='/weekly-menu' element={<WeeklyMenu/>}/>
           <Route path='/shopping-list' element={<ShoppingList/>}/>
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/create-recipe' element={<CreateRecipePage />} />
+          <Route path='/create-recipe/:id' element={<CreateRecipePage />} />
         </Route>
+
+        <Route path='*' element={<PageNotFound />}/>
       </Routes>
     </BrowserRouter>
   );
