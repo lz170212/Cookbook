@@ -13,7 +13,7 @@ export default function Navi() {
     };
 
   return (
-    <nav className='bg-gray-100 shadow-md h-screen'>
+    <nav className='bg-gray-100 shadow-md h-screen w-[150px]'>
        <ul className='mt-5'>
         {
             Menus.map((menu,index)=>(

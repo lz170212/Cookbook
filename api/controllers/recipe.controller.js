@@ -102,7 +102,7 @@ export const getSavedRecipes = async (req, res, next) => {
     try{
         const data = await User.findOne({_id: req.user.id})
         .populate("saved_recipes", "name image highlights ingredients instructions prep_time")
-        .select("saved_recipes")
+        //.select("saved_recipes")
         res.status(200).json(data)
 
     } catch(err){

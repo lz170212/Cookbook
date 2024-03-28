@@ -27,6 +27,9 @@ export default function Header() {
                     
                 {currentUser ? (
                     <div>
+                        <Link to='/'>   
+                            <li className=' text-slate-700 hover:underline'> Home</li>
+                        </Link>
                         <img
                             className='rounded-full h-7 w-7 object-cover cursor-pointer'
                             src={currentUser.avatar}

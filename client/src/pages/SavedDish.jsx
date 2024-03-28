@@ -7,6 +7,7 @@ export default function SavedDish() {
     try{
       const res = await fetch('/api/recipe/saved-recipes')
       const { saved_recipes } = await res.json()
+      console.log(saved_recipes);
       setRecipes(saved_recipes)
 
     } catch(err){
