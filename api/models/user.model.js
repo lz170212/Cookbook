@@ -22,8 +22,25 @@ const userSchema = new mongoose.Schema({
     saved_recipes: {
         type: [Schema.ObjectId],
         ref: "Recipe"
-    }
-},{ timestamps: true}
+    },
+    weekly_menu: [{
+        day:{
+            type:String,
+            required:true,
+            unique:true,
+            enum:[0,1,2,3,4,5,6],
+        },
+        time:{
+            type:String,
+            required:true,
+            enum:['breakfast','lunch','snack','dinner'],
+        },
+        menu:{
+            type:Schema.ObjectId,
+            ref: "Recipe"
+        },
+    }],
+},{ timestamps: true},{strict:false},
 );
 const User = mongoose.model('User',userSchema);
 export default User;

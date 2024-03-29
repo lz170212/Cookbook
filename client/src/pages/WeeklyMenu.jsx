@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useRef} from 'react'
 import WeekCalendar from '../components/WeekCalendar'
 import MenuList from '../components/MenuList'
 import PopupRecipe from '../components/PopupRecipe'
@@ -13,11 +13,11 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 export default function WeeklyMenu() {
-  const [menuList, setMenuList] = useState([]);
   const [popupOpen, setPopupOpen]=useState(false);
   const [clickedRecipe, setClickedRecipe]=useState(null);
-  const [newMenuOnCalendar, setNewMenuOnCalendar] = useState(null);
-  const [cellId, setCellId] = useState("");
+  const [menuList,setMenuList] = useState(null);
+  //const [menuCalendar, setMenuCalendar] = useState([]);
+  const savedRecipeList = useRef([]);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -25,8 +25,25 @@ export default function WeeklyMenu() {
     })
   );
   useEffect(()=>{
+    if(menuList===null){
       fetchAllSavedDish();
+    }
+      fetchAllMenuOnCalendar();
+      
   },[]);
+  const fetchAllMenuOnCalendar = async ()=>{
+    const res = await fetch('/api/recipe/weekly-menu',
+    {method:'GET'});
+    const {weekly_menu} = await res.json();
+    //setMenuCalendar(weekly_menu);
+    //console.log(menuCalendar);
+    weekly_menu.map((everydayMenu)=>
+     { 
+      const cellId = everydayMenu.day+"_"+everydayMenu.time;
+      showMenuOnCalendar(cellId,everydayMenu.menu.name);
+    }
+    );
+  }
   ///api/recipe/saved-recipes
   const fetchAllSavedDish= async ()=>{
     try {
@@ -34,18 +51,18 @@ export default function WeeklyMenu() {
       {method:'GET'});
       const {saved_recipes} = await res.json();
       setMenuList(saved_recipes);
-
-
+      //menuList =saved_recipes;
+      console.log(saved_recipes);
+      savedRecipeList.current=saved_recipes;
+      //console.log(savedRecipeList);
     } catch(err){
       console.log(err.message)
     }
   }
-  const addMenuToCalendar =(e)=>{
-    const {active, over} =e;
-    const menu = active.data.current?.name; 
-    const newMenuLocation = document.getElementById(over.id);
-    console.log(newMenuLocation.innerHTML);
+  const showMenuOnCalendar= (id,menu)=>{
+    const newMenuLocation = document.getElementById(id);
     newMenuLocation.innerHTML= menu;
+    console.log(menu);
     newMenuLocation.style.backgroundColor="rgb(226 232 240)";
     newMenuLocation.onclick =()=>{
       setPopupOpen(true);
@@ -54,8 +71,14 @@ export default function WeeklyMenu() {
     }
 
   }
+  const addMenuToCalendar =(e)=>{
+    const {active, over} =e;
+    const menu = active.data.current?.name; 
+    showMenuOnCalendar(over.id,menu);
+  }
   const getRecipeByItsName =(menu)=>{
-    const recipe= menuList.find((element)=>element.name===menu);
+    //console.log(savedRecipeList);
+    const recipe= savedRecipeList.current.find((element)=>element.name===menu);
     return recipe;
   }
   const openPopUp =(open)=>{setPopupOpen(open);}
@@ -63,7 +86,8 @@ export default function WeeklyMenu() {
     <div className='ml-10 flex flex-col items-center'>
       <h1 className='mt-10'>Weekly Menu</h1>
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={addMenuToCalendar}> 
-      <WeekCalendar addedMenu={newMenuOnCalendar} cell={cellId}></WeekCalendar>
+      <WeekCalendar></WeekCalendar>
+      {console.log(menuList)}
       <MenuList menuList={menuList} ></MenuList>
       </DndContext>
       {popupOpen && <PopupRecipe open={openPopUp} recipe={clickedRecipe}></PopupRecipe>}

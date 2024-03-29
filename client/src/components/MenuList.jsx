@@ -2,6 +2,7 @@ import React from 'react'
 import MenuItem from './MenuItem';
 
 export default function MenuList({menuList}) {
+  console.log(menuList);
   return (
     <div className='flex  mt-10 mr-10 grow flex-wrap  items-center gap-10'>
         {

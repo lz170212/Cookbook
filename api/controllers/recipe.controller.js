@@ -110,3 +110,13 @@ export const getSavedRecipes = async (req, res, next) => {
     }
     
 }
+
+export const getWeeklyMenuRecipes =async (req, res, next)=>{
+    try{
+        const data = await User.findOne({_id: req.user.id})
+        .populate({path:"weekly_menu", populate:{path:"menu",model:"Recipe"}});
+        res.status(200).json(data);
+    }catch(err){
+        next(err);
+    }
+}
