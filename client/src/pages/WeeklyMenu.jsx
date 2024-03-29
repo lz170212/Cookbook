@@ -32,17 +32,21 @@ export default function WeeklyMenu() {
       
   },[]);
   const fetchAllMenuOnCalendar = async ()=>{
-    const res = await fetch('/api/recipe/weekly-menu',
-    {method:'GET'});
-    const {weekly_menu} = await res.json();
-    //setMenuCalendar(weekly_menu);
-    //console.log(menuCalendar);
-    weekly_menu.map((everydayMenu)=>
-     { 
-      const cellId = everydayMenu.day+"_"+everydayMenu.time;
-      showMenuOnCalendar(cellId,everydayMenu.menu.name);
+    try{
+      const res = await fetch('/api/recipe/weekly-menu',
+      {method:'GET'});
+      const {weekly_menu} = await res.json();
+      //setMenuCalendar(weekly_menu);
+      console.log(weekly_menu);
+      weekly_menu.map((everydayMenu)=>
+      { 
+        const cellId = everydayMenu.day+"_"+everydayMenu.time;
+        showMenuOnCalendar(cellId,everydayMenu.menu.name);
+      }
+      );
+    }catch(err){
+      console.log(err.message)
     }
-    );
   }
   ///api/recipe/saved-recipes
   const fetchAllSavedDish= async ()=>{
@@ -56,7 +60,7 @@ export default function WeeklyMenu() {
       savedRecipeList.current=saved_recipes;
       //console.log(savedRecipeList);
     } catch(err){
-      console.log(err.message)
+      console.log(err.message);
     }
   }
   const showMenuOnCalendar= (id,menu)=>{
@@ -64,6 +68,7 @@ export default function WeeklyMenu() {
     newMenuLocation.innerHTML= menu;
     console.log(menu);
     newMenuLocation.style.backgroundColor="rgb(226 232 240)";
+    newMenuLocation.style.borderRadius = "10px";
     newMenuLocation.onclick =()=>{
       setPopupOpen(true);
       const recipe = getRecipeByItsName(menu);
@@ -73,8 +78,29 @@ export default function WeeklyMenu() {
   }
   const addMenuToCalendar =(e)=>{
     const {active, over} =e;
-    const menu = active.data.current?.name; 
-    showMenuOnCalendar(over.id,menu);
+    const menu = active.data.current; 
+    showMenuOnCalendar(over.id,menu.name);
+    saveMenuInDB(over.id,menu.id);
+  }
+  const saveMenuInDB = async (location, menuId)=>{
+    const time = location.split('_');
+    //time[0]-> day  time[1]->time: breakfast...
+    try{
+      const res= await fetch('/api/recipe/save-weekly-menu',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({
+          day:time[0],
+          time:time[1],
+          menu:menuId,
+        }),
+      });
+    }catch(err){
+      console.log(err.message);
+    }
   }
   const getRecipeByItsName =(menu)=>{
     //console.log(savedRecipeList);

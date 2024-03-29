@@ -1,5 +1,22 @@
 import {mongoose, Schema} from "mongoose";
 
+const weeklyMenuSchema = new mongoose.Schema({
+    day:{
+        type:String,
+        required:true,
+        unique:true,
+        enum:[0,1,2,3,4,5,6],
+    },
+    time:{
+        type:String,
+        required:true,
+        enum:['breakfast','lunch','snack','dinner'],
+    },
+    menu:{
+        type:Schema.ObjectId,
+        ref: "Recipe"
+    },
+},{_id:false});
 const userSchema = new mongoose.Schema({
     username:{
         type:String,
@@ -23,23 +40,7 @@ const userSchema = new mongoose.Schema({
         type: [Schema.ObjectId],
         ref: "Recipe"
     },
-    weekly_menu: [{
-        day:{
-            type:String,
-            required:true,
-            unique:true,
-            enum:[0,1,2,3,4,5,6],
-        },
-        time:{
-            type:String,
-            required:true,
-            enum:['breakfast','lunch','snack','dinner'],
-        },
-        menu:{
-            type:Schema.ObjectId,
-            ref: "Recipe"
-        },
-    }],
+    weekly_menu: [weeklyMenuSchema],
 },{ timestamps: true},{strict:false},
 );
 const User = mongoose.model('User',userSchema);

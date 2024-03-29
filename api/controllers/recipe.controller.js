@@ -120,3 +120,16 @@ export const getWeeklyMenuRecipes =async (req, res, next)=>{
         next(err);
     }
 }
+
+export const saveWeeklyMenuRecipes= async (req,res,next) =>{
+    try{
+        const {day,time,menu} = req.body;
+        const weeklyMenu ={day: day, time: time, menu: menu};
+        await User.findOneAndUpdate({_id:req.user.id},
+            {$push:{weekly_menu: weeklyMenu}})
+        res.status(200).json("Weekly Menu Saved");
+
+    }catch(err){
+        next(err);
+    }
+}

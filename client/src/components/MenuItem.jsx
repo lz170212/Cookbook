@@ -5,7 +5,7 @@ export default function MenuItem({id,name}) {
     const { attributes, listeners, setNodeRef, transform ,isDragging} =
     useDraggable({
         id: id,
-        data: { name: name }
+        data: {id:id, name: name }
       });
 
     const style = {
