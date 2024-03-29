@@ -36,8 +36,6 @@ export default function WeeklyMenu() {
       const res = await fetch('/api/recipe/weekly-menu',
       {method:'GET'});
       const {weekly_menu} = await res.json();
-      //setMenuCalendar(weekly_menu);
-      console.log(weekly_menu);
       weekly_menu.map((everydayMenu)=>
       { 
         const cellId = everydayMenu.day+"_"+everydayMenu.time;
@@ -55,10 +53,7 @@ export default function WeeklyMenu() {
       {method:'GET'});
       const {saved_recipes} = await res.json();
       setMenuList(saved_recipes);
-      //menuList =saved_recipes;
-      console.log(saved_recipes);
       savedRecipeList.current=saved_recipes;
-      //console.log(savedRecipeList);
     } catch(err){
       console.log(err.message);
     }
@@ -66,7 +61,6 @@ export default function WeeklyMenu() {
   const showMenuOnCalendar= (id,menu)=>{
     const newMenuLocation = document.getElementById(id);
     newMenuLocation.innerHTML= menu;
-    console.log(menu);
     newMenuLocation.style.backgroundColor="rgb(226 232 240)";
     newMenuLocation.style.borderRadius = "10px";
     newMenuLocation.onclick =()=>{
@@ -103,7 +97,6 @@ export default function WeeklyMenu() {
     }
   }
   const getRecipeByItsName =(menu)=>{
-    //console.log(savedRecipeList);
     const recipe= savedRecipeList.current.find((element)=>element.name===menu);
     return recipe;
   }
@@ -113,12 +106,11 @@ export default function WeeklyMenu() {
       <h1 className='mt-10'>Weekly Menu</h1>
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={addMenuToCalendar}> 
       <WeekCalendar></WeekCalendar>
-      {console.log(menuList)}
       <MenuList menuList={menuList} ></MenuList>
       </DndContext>
-      {popupOpen && <PopupRecipe open={openPopUp} recipe={clickedRecipe}></PopupRecipe>}
-      
-
+      {
+        popupOpen && <PopupRecipe open={openPopUp} recipe={clickedRecipe}></PopupRecipe>
+      }
     </div>
   )
 }
