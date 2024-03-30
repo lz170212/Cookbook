@@ -15,9 +15,13 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 export default function WeeklyMenu() {
   const [popupOpen, setPopupOpen]=useState(false);
   const [clickedRecipe, setClickedRecipe]=useState(null);
+  const [clickedCell, setClickedCell]=useState(null);
   const [menuList,setMenuList] = useState(null);
-  //const [menuCalendar, setMenuCalendar] = useState([]);
+  //const {loading} = useSelector((state)=>state.user);
+  const [menuCalendar, setMenuCalendar] = useState([]);
+  const [removedSuccess,setRemovedSuccess] = useState(false);
   const savedRecipeList = useRef([]);
+  const calendarMenu = useRef([]);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -36,6 +40,9 @@ export default function WeeklyMenu() {
       const res = await fetch('/api/recipe/weekly-menu',
       {method:'GET'});
       const {weekly_menu} = await res.json();
+      console.log(weekly_menu);
+      calendarMenu.current = weekly_menu;
+      setMenuCalendar(weekly_menu);
       weekly_menu.map((everydayMenu)=>
       { 
         const cellId = everydayMenu.day+"_"+everydayMenu.time;
@@ -67,6 +74,7 @@ export default function WeeklyMenu() {
       setPopupOpen(true);
       const recipe = getRecipeByItsName(menu);
       setClickedRecipe(recipe);
+      setClickedCell(id);
     }
 
   }
@@ -101,6 +109,31 @@ export default function WeeklyMenu() {
     return recipe;
   }
   const openPopUp =(open)=>{setPopupOpen(open);}
+
+  const handleRemoveMenu = async (recipeId,cell)=>{
+    //remove it from db weekly menu
+    //update the state re-render page show Removed
+    const time = cell.split('_');
+    try{
+      const res = await fetch(`/api/recipe/remove-weekly-menu/${recipeId}`,{
+        method:"PUT",
+        headers:{
+          'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({
+          day:time[0],
+          time:time[1],
+          menu:recipeId,
+        }),});
+       const updatedMenu = calendarMenu.current.filter(menu=>(menu.day!=time[0]&&menu.time!=time[1]&&menu.menu!=recipeId));
+        setMenuCalendar(updatedMenu);
+        setRemovedSuccess(true);
+
+      
+    }catch(err){
+      console.log(err.message);
+    }
+}
   return (
     <div className='ml-10 flex flex-col items-center'>
       <h1 className='mt-10'>Weekly Menu</h1>
@@ -109,7 +142,7 @@ export default function WeeklyMenu() {
       <MenuList menuList={menuList} ></MenuList>
       </DndContext>
       {
-        popupOpen && <PopupRecipe open={openPopUp} recipe={clickedRecipe}></PopupRecipe>
+        popupOpen && <PopupRecipe open={openPopUp} recipe={clickedRecipe} cell ={clickedCell} handleRemoveMenu={handleRemoveMenu} remove={removedSuccess}></PopupRecipe>
       }
     </div>
   )
