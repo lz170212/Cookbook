@@ -15,7 +15,7 @@ router.post('/collect-recipe', verifyToken, collectRecipe)
 router.post('/is-already-collected', verifyToken, checkIfCollected)
 router.post('/save-weekly-menu',verifyToken, saveWeeklyMenuRecipes);
 
-router.put('/remove-weekly-menu/:id',verifyToken,removeMenuFromCalendar);
+router.put('/remove-weekly-menu',verifyToken,removeMenuFromCalendar);
 
 
 

@@ -136,9 +136,7 @@ export const saveWeeklyMenuRecipes= async (req,res,next) =>{
 
 export const removeMenuFromCalendar= async (req,res,next) =>{
     try{
-        //const {menuId} = req.params.id;
         const {menu,day,time}=req.body;
-        console.log(menu+" "+time+" "+day);
         await User.findOneAndUpdate({_id:req.user.id},
             {$pull:{weekly_menu:{menu:menu, time:time, day:day}}})
         res.status(200).json("Menu Removed");

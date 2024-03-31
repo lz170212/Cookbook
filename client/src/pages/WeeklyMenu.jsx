@@ -16,7 +16,7 @@ export default function WeeklyMenu() {
   const [popupOpen, setPopupOpen]=useState(false);
   const [clickedRecipe, setClickedRecipe]=useState(null);
   const [clickedCell, setClickedCell]=useState(null);
-  const [menuList,setMenuList] = useState(null);
+  const [menuList,setMenuList] = useState([]);
   //const {loading} = useSelector((state)=>state.user);
   const [menuCalendar, setMenuCalendar] = useState([]);
   const [removedSuccess,setRemovedSuccess] = useState(false);
@@ -29,14 +29,19 @@ export default function WeeklyMenu() {
     })
   );
   useEffect(()=>{
-    if(menuList===null){
+    
       fetchAllSavedDish();
-    }
       fetchAllMenuOnCalendar();
-      
   },[]);
+  useEffect(()=>{
+    if(menuCalendar!=null &&menuCalendar!=undefined&& menuCalendar.length!=0){
+      console.log(menuCalendar);
+    displayMenuOnCalendar();}
+  },[menuCalendar]);
+  
   const fetchAllMenuOnCalendar = async ()=>{
     try{
+      console.log("fetch menu calendar");
       const res = await fetch('/api/recipe/weekly-menu',
       {method:'GET'});
       const {weekly_menu} = await res.json();
@@ -64,6 +69,16 @@ export default function WeeklyMenu() {
     } catch(err){
       console.log(err.message);
     }
+  }
+  const displayMenuOnCalendar=()=>{
+     console.log("display menu on calendar");
+     console.log(menuCalendar);
+    menuCalendar.map((everydayMenu)=>
+      { 
+        const cellId = everydayMenu.day+"_"+everydayMenu.time;
+        showMenuOnCalendar(cellId,everydayMenu.menu.name);
+      }
+      );
   }
   const showMenuOnCalendar= (id,menu)=>{
     const newMenuLocation = document.getElementById(id);
@@ -101,7 +116,7 @@ export default function WeeklyMenu() {
         }),
       });
     }catch(err){
-      console.log(err.message);
+      console.log(err.message); 
     }
   }
   const getRecipeByItsName =(menu)=>{
@@ -115,7 +130,7 @@ export default function WeeklyMenu() {
     //update the state re-render page show Removed
     const time = cell.split('_');
     try{
-      const res = await fetch(`/api/recipe/remove-weekly-menu/${recipeId}`,{
+      const res = await fetch('/api/recipe/remove-weekly-menu',{
         method:"PUT",
         headers:{
           'Content-Type': 'application/json',
@@ -125,9 +140,19 @@ export default function WeeklyMenu() {
           time:time[1],
           menu:recipeId,
         }),});
-       const updatedMenu = calendarMenu.current.filter(menu=>(menu.day!=time[0]&&menu.time!=time[1]&&menu.menu!=recipeId));
-        setMenuCalendar(updatedMenu);
+       //const updatedMenu = calendarMenu.current.filter(menu=>(menu.day!=time[0]&&menu.time!=time[1]&&menu.menu!=recipeId));
+       // setMenuCalendar(updatedMenu);
+       setMenuCalendar(prev=>{
+        let arr =new Array(prev);
+        arr.filter(menu=>(menu.day!=time[0]&&menu.time!=time[1]&&menu.menu!=recipeId));
+       })
+       console.log(menuCalendar);
         setRemovedSuccess(true);
+       //displayMenuOnCalendar();
+       //manually remove the menu UI  //BUG !!!  再次加menu再删会报错, 连续删除第二个时也会报错
+       const element = document.getElementById(cell)
+       element.innerHTML=null;
+       element.style.backgroundColor="rgb(248 250 252)";
 
       
     }catch(err){
@@ -142,7 +167,7 @@ export default function WeeklyMenu() {
       <MenuList menuList={menuList} ></MenuList>
       </DndContext>
       {
-        popupOpen && <PopupRecipe open={openPopUp} recipe={clickedRecipe} cell ={clickedCell} handleRemoveMenu={handleRemoveMenu} remove={removedSuccess}></PopupRecipe>
+        popupOpen && <PopupRecipe open={openPopUp} recipe={clickedRecipe} cell ={clickedCell} handleRemoveMenu={handleRemoveMenu} remove={removedSuccess} setRemove={setRemovedSuccess}></PopupRecipe>
       }
     </div>
   )
