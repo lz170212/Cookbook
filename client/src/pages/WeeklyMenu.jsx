@@ -85,12 +85,13 @@ export default function WeeklyMenu() {
     newMenuLocation.innerHTML= menu;
     newMenuLocation.style.backgroundColor="rgb(226 232 240)";
     newMenuLocation.style.borderRadius = "10px";
+    if(newMenuLocation.innerHTML!=null){
     newMenuLocation.onclick =()=>{
       setPopupOpen(true);
       const recipe = getRecipeByItsName(menu);
       setClickedRecipe(recipe);
       setClickedCell(id);
-    }
+    }}
 
   }
   const addMenuToCalendar =(e)=>{
@@ -140,17 +141,9 @@ export default function WeeklyMenu() {
           time:time[1],
           menu:recipeId,
         }),});
-       //const updatedMenu = calendarMenu.current.filter(menu=>(menu.day!=time[0]&&menu.time!=time[1]&&menu.menu!=recipeId));
-       // setMenuCalendar(updatedMenu);
-       setMenuCalendar(prev=>{
-        let arr =new Array(prev);
-        arr.filter(menu=>(menu.day!=time[0]&&menu.time!=time[1]&&menu.menu!=recipeId));
-       })
-       console.log(menuCalendar);
-        setRemovedSuccess(true);
-       //displayMenuOnCalendar();
-       //manually remove the menu UI  //BUG !!!  再次加menu再删会报错, 连续删除第二个时也会报错
-       const element = document.getElementById(cell)
+       
+       setRemovedSuccess(true);
+       const element = document.getElementById(cell);
        element.innerHTML=null;
        element.style.backgroundColor="rgb(248 250 252)";
 
