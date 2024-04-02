@@ -125,7 +125,9 @@ const CreateRecipePage = (req, res, next) => {
         }
 
         let loadingToast = toast.loading('saving recipe...')
-        
+
+        e.target.setAttribute("disabled", true);
+
         if(id){
             recipe.is_customized = true
         }
@@ -144,10 +146,12 @@ const CreateRecipePage = (req, res, next) => {
             if(data.success === false){
                 // setError(data.message)
                 toast.dismiss(loadingToast)
+                e.target.removeAttribute("disabled")
                 return
             }
 
             toast.dismiss(loadingToast)
+            e.target.removeAttribute("disabled")
             toast.success("Saved 👍")
             console.log(data)
             setTimeout(() => {
@@ -285,7 +289,7 @@ const CreateRecipePage = (req, res, next) => {
             
             <div className='flex justify-center mt-16'>
                 <button 
-                    className='w-[300px] bg-black text-white rounded-full py-3 px-6 text-xl capitalize hover:bg-opacity-80'
+                    className='w-[300px] bg-black text-white rounded-full py-3 px-6 text-xl capitalize hover:bg-opacity-80 disabled:bg-slate-300'
                     onClick={handleRecipeSave}
                 >Save Recipe</button>
             </div>
