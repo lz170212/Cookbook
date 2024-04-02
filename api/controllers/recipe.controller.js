@@ -48,6 +48,7 @@ export const getAllRecipes = async (req, res, next) => {
     try{
         let data = await Recipe.find({ $or: [ {is_customized: false}, { is_customized: { $exists: false} }] })
             .populate('author', "username")
+            .sort("name")
             .limit(maxLimit)
         res.status(200).json({data})
     } catch(err){
