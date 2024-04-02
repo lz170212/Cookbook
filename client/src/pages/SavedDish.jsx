@@ -15,7 +15,7 @@ export default function SavedDish() {
     }
   }
 
-  const [ recipes, setRecipes ] = useState([])
+  const [ recipes, setRecipes ] = useState(null)
 
   useEffect(() => {
     fetchCollectedRecipes()
@@ -24,7 +24,7 @@ export default function SavedDish() {
   return (
     <div className='w-full px-10 my-10 flex gap-10 justify-start flex-wrap'>
       {
-        recipes.length ? 
+        recipes ? 
           recipes.map((recipe, i) => {
             return <RecipeCard key={i} recipe={recipe} />
           })
