@@ -46,7 +46,7 @@ export const createRecipe = async (req, res, next) => {
 export const getAllRecipes = async (req, res, next) => {
     let maxLimit = 20;
     try{
-        let data = await Recipe.find()
+        let data = await Recipe.find({ $or: [ {is_customized: false}, { is_customized: { $exists: false} }] })
             .populate('author', "username")
             .limit(maxLimit)
         res.status(200).json({data})
