@@ -16,11 +16,11 @@ export default function WeeklyMenu() {
   const [allMenuCalendar, setAllMenuCalendar] = useState([]);
   const [removedSuccess, setRemovedSuccess] = useState(false);
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    /*useSensor(PointerSensor, {
       activationConstraint: { delay: 150, tolerance: 5 },
-    }),
+    }),*/
     useSensor(MouseSensor, {
-      activationConstraint: { delay: 150, tolerance: 5 },
+      activationConstraint: { delay: 150, tolerance: 100 },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
