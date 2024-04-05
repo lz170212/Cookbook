@@ -160,11 +160,13 @@ const CreateRecipePage = (req, res, next) => {
       );
     }
 
-    let loadingToast = toast.loading("saving recipe...");
+        let loadingToast = toast.loading('saving recipe...')
 
-    if (id) {
-      recipe.is_customized = true;
-    }
+        e.target.setAttribute("disabled", true);
+
+        if(id){
+            recipe.is_customized = true
+        }
 
     try {
       const res = await fetch("/api/recipe/create-recipe", {
@@ -177,42 +179,29 @@ const CreateRecipePage = (req, res, next) => {
 
       const data = await res.json();
 
-      if (data.success === false) {
-        // setError(data.message)
-        toast.dismiss(loadingToast);
-        return;
-      }
+            if(data.success === false){
+                // setError(data.message)
+                toast.dismiss(loadingToast)
+                e.target.removeAttribute("disabled")
+                return
+            }
 
-      toast.dismiss(loadingToast);
-      toast.success("Saved 👍");
-      console.log(data);
-      setTimeout(() => {
-        navigate("/");
-      }, 500);
-    } catch (err) {
-      toast.dismiss(loadingToast);
-      // setError(err.message);
-    }
-  };
+            toast.dismiss(loadingToast)
+            e.target.removeAttribute("disabled")
+            toast.success("Saved 👍")
+            console.log(data)
+            setTimeout(() => {
+                navigate('/');
+            }, 500);
+            
 
-  const handleDragEnd = (e) => {
-    const { active, over } = e;
-    if (active.id !== over.id) {
-      if (active.data.current.type === "ingredients") {
-        setIngredients((ingredients) => {
-          const oldIndex = active.id - 1;
-          const newIndex = over.id - 1;
-          return arrayMove(ingredients, oldIndex, newIndex);
-        });
-      } else {
-        setInstructions((instructions) => {
-          const oldIndex = active.id - 1;
-          const newIndex = over.id - 1;
-          return arrayMove(instructions, oldIndex, newIndex);
-        });
-      }
+        } catch(err){
+            toast.dismiss(loadingToast)
+            // setError(err.message);
+        }
+
     }
-  };
+
 
   return (
     <main className="font-montserrat max-w-[90vw] flex flex-col mx-auto  py-4 px-[5vw] md:px-[7vw] lg:px-[10vw]">
@@ -295,100 +284,77 @@ const CreateRecipePage = (req, res, next) => {
             </div>
           </div>
 
-        <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-        >
-            <SortableContext
-              items={ingredients}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="my-3">
-                <p className="text-xl font-medium text-blue-600">
-                  🥕 Ingredients
-                </p>
+                    <div className='my-3'>
+                        <p className='text-xl font-medium text-blue-600'>🥕 Ingredients</p>
 
-                <p className="font-gelasio italic my-1 text-gray-500">
-                  Please use numeric numbers for the amount. Eg. 1 medium
-                  carrots.{" "}
-                </p>
-                {ingredients?.map((item, i) => {
-                  return (
-                    <SortableIngredients
-                      key={i}
-                      index={i}
-                      item={item}
-                      handleInputFieldChange={handleInputFieldChange}
-                      handleInputFieldDelete={handleInputFieldDelete}
-                    ></SortableIngredients>
-                  );
-                })}
+                        <p className='font-gelasio italic my-1 text-gray-500'>Please use numeric numbers for the amount. Eg. 1 medium carrots. </p>
+                    
+                        {
+                            ingredients.map((item, i) => {
+                                return (
+                                    <div key={i} className='flex items-center gap-3 my-1'>
+                                        <input 
+                                            type="text" 
+                                            className='h-10 w-[40vw] lg:w-[35vw] rounded-md px-2'
+                                            value={item} 
+                                            onChange={(e) => {handleInputFieldChange(e, 'ingredients', i)}}
+                                        />
+                                        <FaMinusSquare  
+                                            className='cursor-pointer rounded-md text-2xl hover:text-red-500'
+                                            onClick={() => {handleInputFieldDelete(i, 'ingredients')}}
+                                        />
+                                    </div>
+                                )
+                            })
+                        }
+                        
+                        <div className='flex justify-start'>
+                            <span className='h-10 w-[40vw] lg:w-[35vw] border-2 border-dashed mt-2 flex justify-center items-center text-4xl rounded-md cursor-pointer' 
+                                onClick={() => {handleAddRow('ingredients')}}
+                            >+</span>
+                        </div>                           
+                    </div>
 
-                <div className="flex justify-start">
-                  <span
-                    className="h-10 w-[40vw] lg:w-[35vw] border-2 border-dashed mt-2 flex justify-center items-center text-4xl rounded-md cursor-pointer"
-                    onClick={() => {
-                      handleAddRow("ingredients");
-                    }}
-                  >
-                    +
-                  </span>
+                    <div className='my-3'>
+                        <p className='text-xl font-medium text-blue-600'>📝 Instructions</p>
+                    
+                        {
+                            instructions.map((item, i) => {
+                                return (
+                                    <div key={i} className='flex items-center gap-3 my-1'>
+                                        <input 
+                                            type="text" 
+                                            className='h-10 w-[40vw] lg:w-[35vw] rounded-md px-2'
+                                            value={item} 
+                                            onChange={(e) => {handleInputFieldChange(e, 'instructions', i)}}
+                                        />
+                                        <FaMinusSquare  
+                                            className='cursor-pointer rounded-md text-2xl hover:text-red-500'
+                                            onClick={() => {handleInputFieldDelete(i, 'instructions')}}
+                                        />
+                                    </div>
+                                )
+                            })
+                        }
+                        
+                        <div className='flex justify-start'>
+                            <span className='h-10 w-[40vw] lg:w-[35vw] border-2 border-dashed mt-2 flex justify-center items-center text-4xl rounded-md cursor-pointer' 
+                                onClick={() => {handleAddRow('instructions')}}
+                            >+</span>
+                        </div>                           
+                    </div>
                 </div>
-              </div>
-            </SortableContext>
-          </DndContext>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={instructions}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="my-3">
-                <p className="text-xl font-medium text-blue-600">
-                  📝 Instructions
-                </p>
+            </form>
+            
+            <div className='flex justify-center mt-16'>
+                <button 
+                    className='w-[300px] bg-black text-white rounded-full py-3 px-6 text-xl capitalize hover:bg-opacity-80 disabled:bg-slate-300'
+                    onClick={handleRecipeSave}
+                >Save Recipe</button>
+            </div>
 
-                {instructions.map((item, i) => {
-                  return (
-                    <SortableInstructions
-                      key={i}
-                      index={i}
-                      item={item}
-                      handleInputFieldChange={handleInputFieldChange}
-                      handleInputFieldDelete={handleInputFieldDelete}
-                    ></SortableInstructions>
-                  );
-                })}
-                <div className="flex justify-start">
-                  <span
-                    className="h-10 w-[40vw] lg:w-[35vw] border-2 border-dashed mt-2 flex justify-center items-center text-4xl rounded-md cursor-pointer"
-                    onClick={() => {
-                      handleAddRow("instructions");
-                    }}
-                  >
-                    +
-                  </span>
-                </div>
-              </div>
-            </SortableContext>
-          </DndContext>
-        </div>
-      </form>
-
-      <div className="flex justify-center mt-16">
-        <button
-          className="w-[300px] bg-black text-white rounded-full py-3 px-6 text-xl capitalize hover:bg-opacity-80"
-          onClick={handleRecipeSave}
-        >
-          Save Recipe
-        </button>
-      </div>
-    </main>
-  );
-};
+        </main>
+    )
+}
 
 export default CreateRecipePage;

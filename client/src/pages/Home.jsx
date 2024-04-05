@@ -208,9 +208,8 @@ export default function Home() {
 
   useEffect(() => {
     if(recipes === null){
-        fetchRecipes()
+        fetchRecipes({})
     }
-
   }, [])
 
   return (
