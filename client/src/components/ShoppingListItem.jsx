@@ -41,11 +41,11 @@ export default function ShoppingListItem ({ ingredient, quantity, related_recipe
                 }
             </span>
             <div className='col-span-2 px-1'>
-                <input className='h-8 rounded-md px-1' 
+                <input  className='h-8 rounded-md px-1' 
                         value={ storeName } 
-                       placeholder='Enter Store Name...'
-                       onChange={handleStoreChange} 
-                       onKeyDown={handleStoreSave}
+                        placeholder='Enter Store Name...'
+                        onChange={handleStoreChange} 
+                        onKeyDown={handleStoreSave}
                 />
             </div>
         </div>
