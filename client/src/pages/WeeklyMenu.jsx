@@ -1,11 +1,11 @@
-import {useEffect, useState, useRef} from 'react'
-import WeekCalendar from '../components/WeekCalendar'
-import MenuList from '../components/MenuList'
-import PopupRecipe from '../components/PopupRecipe'
+import { useEffect, useState, useRef } from "react";
+import WeekCalendar from "../components/WeekCalendar";
+import MenuList from "../components/MenuList";
 import {
   DndContext,
   KeyboardSensor,
   PointerSensor,
+  MouseSensor,
   useSensor,
   useSensors,
   closestCorners,
@@ -13,162 +13,105 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 export default function WeeklyMenu() {
-  const [popupOpen, setPopupOpen]=useState(false);
-  const [clickedRecipe, setClickedRecipe]=useState(null);
-  const [clickedCell, setClickedCell]=useState(null);
-  const [menuList,setMenuList] = useState([]);
-  //const {loading} = useSelector((state)=>state.user);
-  const [menuCalendar, setMenuCalendar] = useState([]);
-  const [removedSuccess,setRemovedSuccess] = useState(false);
-  const savedRecipeList = useRef([]);
-  const calendarMenu = useRef([]);
+  const [allMenuCalendar, setAllMenuCalendar] = useState([]);
+  const [removedSuccess, setRemovedSuccess] = useState(false);
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    /*useSensor(PointerSensor, {
+      activationConstraint: { delay: 150, tolerance: 5 },
+    }),*/
+    useSensor(MouseSensor, {
+      activationConstraint: { delay: 150, tolerance: 100 },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-  useEffect(()=>{
-    
-      fetchAllSavedDish();
-      fetchAllMenuOnCalendar();
-  },[]);
-  useEffect(()=>{
-    if(menuCalendar!=null &&menuCalendar!=undefined&& menuCalendar.length!=0){
-      console.log(menuCalendar);
-    displayMenuOnCalendar();}
-  },[menuCalendar]);
-  
-  const fetchAllMenuOnCalendar = async ()=>{
-    try{
-      console.log("fetch menu calendar");
-      const res = await fetch('/api/recipe/weekly-menu',
-      {method:'GET'});
-      const {weekly_menu} = await res.json();
-      console.log(weekly_menu);
-      calendarMenu.current = weekly_menu;
-      setMenuCalendar(weekly_menu);
-      weekly_menu.map((everydayMenu)=>
-      { 
-        const cellId = everydayMenu.day+"_"+everydayMenu.time;
-        showMenuOnCalendar(cellId,everydayMenu.menu.name);
-      }
-      );
-    }catch(err){
-      console.log(err.message)
-    }
-  }
-  ///api/recipe/saved-recipes
-  const fetchAllSavedDish= async ()=>{
-    try {
-      const res = await fetch('/api/recipe/saved-recipes',
-      {method:'GET'});
-      const {saved_recipes} = await res.json();
-      setMenuList(saved_recipes);
-      savedRecipeList.current=saved_recipes;
-    } catch(err){
-      console.log(err.message);
-    }
-  }
-  const displayMenuOnCalendar=()=>{
-     console.log("display menu on calendar");
-     console.log(menuCalendar);
-    menuCalendar.map((everydayMenu)=>
-      { 
-        const cellId = everydayMenu.day+"_"+everydayMenu.time;
-        showMenuOnCalendar(cellId,everydayMenu.menu.name);
-      }
-      );
-  }
-  const showMenuOnCalendar= (id,menu)=>{
-    const newMenuLocation = document.getElementById(id);
-    newMenuLocation.innerHTML= menu;
-    newMenuLocation.style.backgroundColor="rgb(226 232 240)";
-    newMenuLocation.style.borderRadius = "10px";
-    newMenuLocation.onclick =()=>{
-      setPopupOpen(true);
-      const recipe = getRecipeByItsName(menu);
-      setClickedRecipe(recipe);
-      setClickedCell(id);
-    }
 
-  }
-  const addMenuToCalendar =(e)=>{
-    const {active, over} =e;
-    const menu = active.data.current; 
-    showMenuOnCalendar(over.id,menu.name);
-    saveMenuInDB(over.id,menu.id);
-  }
-  const saveMenuInDB = async (location, menuId)=>{
-    const time = location.split('_');
-    //time[0]-> day  time[1]->time: breakfast...
-    try{
-      const res= await fetch('/api/recipe/save-weekly-menu',
-      {
-        method:'POST',
-        headers:{
-          'Content-Type': 'application/json',
+  const handleDragEnd = (e) => {
+    const { active, over } = e;
+    let menu = active.data.current.menuInfo;
+    if (active.id !== over.id) {
+      if (active.id.includes("_")) {
+        const oldCell = active.id;
+        const timeInfo = oldCell.split("_");
+        let menuToRemove = {
+          menu: { _id: menu._id },
+          day: timeInfo[0],
+          time: timeInfo[1],
+        };
+        handleRemoveMenu(menuToRemove);
+        menu = { menu: menu };
+      }
+
+      const split = over.id.split("_");
+
+      saveMenuInDB(menu, split[0], split[1]);
+    }
+  };
+  const saveMenuInDB = async (menu, day, time) => {
+    try {
+      const res = await fetch("/api/recipe/save-weekly-menu", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        body:JSON.stringify({
-          day:time[0],
-          time:time[1],
-          menu:menuId,
+        body: JSON.stringify({
+          day: day,
+          time: time,
+          menu: menu.menu._id,
         }),
       });
-    }catch(err){
-      console.log(err.message); 
-    }
-  }
-  const getRecipeByItsName =(menu)=>{
-    const recipe= savedRecipeList.current.find((element)=>element.name===menu);
-    return recipe;
-  }
-  const openPopUp =(open)=>{setPopupOpen(open);}
-
-  const handleRemoveMenu = async (recipeId,cell)=>{
-    //remove it from db weekly menu
-    //update the state re-render page show Removed
-    const time = cell.split('_');
-    try{
-      const res = await fetch('/api/recipe/remove-weekly-menu',{
-        method:"PUT",
-        headers:{
-          'Content-Type': 'application/json',
-        },
-        body:JSON.stringify({
-          day:time[0],
-          time:time[1],
-          menu:recipeId,
-        }),});
-       //const updatedMenu = calendarMenu.current.filter(menu=>(menu.day!=time[0]&&menu.time!=time[1]&&menu.menu!=recipeId));
-       // setMenuCalendar(updatedMenu);
-       setMenuCalendar(prev=>{
-        let arr =new Array(prev);
-        arr.filter(menu=>(menu.day!=time[0]&&menu.time!=time[1]&&menu.menu!=recipeId));
-       })
-       console.log(menuCalendar);
-        setRemovedSuccess(true);
-       //displayMenuOnCalendar();
-       //manually remove the menu UI  //BUG !!!  再次加menu再删会报错, 连续删除第二个时也会报错
-       const element = document.getElementById(cell)
-       element.innerHTML=null;
-       element.style.backgroundColor="rgb(248 250 252)";
-
-      
-    }catch(err){
+      setAllMenuCalendar((prev) => [
+        ...prev,
+        { menu: menu.menu, day: day, time: time },
+      ]);
+    } catch (err) {
       console.log(err.message);
     }
-}
+  };
+  const handleRemoveMenu = async (menuToRemove) => {
+    try {
+      const res = await fetch("/api/recipe/remove-weekly-menu", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          day: menuToRemove.day,
+          time: menuToRemove.time,
+          menu: menuToRemove.menu._id,
+        }),
+      });
+      setAllMenuCalendar(
+        allMenuCalendar.filter(
+          (menu) =>
+            menu.day !== menuToRemove.day ||
+            menu.time !== menuToRemove.time ||
+            menu.menu._id !== menuToRemove.menu._id
+        )
+      );
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
-    <div className='ml-10 flex flex-col items-center'>
-      <h1 className='mt-10'>Weekly Menu</h1>
-      <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={addMenuToCalendar}> 
-      <WeekCalendar></WeekCalendar>
-      <MenuList menuList={menuList} ></MenuList>
+    <div className="ml-10 flex flex-col items-center">
+      <h1 className="mt-10">Weekly Menu</h1>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragEnd={handleDragEnd}
+      >
+        <WeekCalendar
+          setAllMenuCalendar={setAllMenuCalendar}
+          allMenuCalendar={allMenuCalendar}
+          handleRemoveMenu={handleRemoveMenu}
+          removedSuccess={removedSuccess}
+          setRemovedSuccess={setRemovedSuccess}
+        ></WeekCalendar>
+        <MenuList></MenuList>
       </DndContext>
-      {
-        popupOpen && <PopupRecipe open={openPopUp} recipe={clickedRecipe} cell ={clickedCell} handleRemoveMenu={handleRemoveMenu} remove={removedSuccess} setRemove={setRemovedSuccess}></PopupRecipe>
-      }
     </div>
-  )
+  );
 }
