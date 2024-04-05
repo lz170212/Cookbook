@@ -145,3 +145,35 @@ export const removeMenuFromCalendar= async (req,res,next) =>{
         next(err);
     }
 }
+
+export const getSearchedRecipe = async (req,res,next) =>{
+    try{
+        console.log("here i am");
+        const searchTerm = req.query.searchTerm || "";
+        const limit = parseInt(req.query.limit) || 10;
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        let highlight = req.query.highlight;
+        if(highlight===undefined) {
+            highlight =/(.*?)/;
+        }
+        let cookingTime = req.query.cookingTime;
+        if(cookingTime==undefined){
+            cookingTime =/(.*?)/;
+        }
+        const sortBy =req.query.sort || "createdAt";
+        const order = "desc";
+        const recipes = await Recipe.find({
+            "$or" :[{name: { $regex: searchTerm, $options: 'i' }},
+            {highlights: { $regex: searchTerm, $options: 'i' }},
+            {ingredients: { $regex: searchTerm, $options: 'i' }},
+            {instructions: { $regex: searchTerm, $options: 'i' }}
+            ]
+        },).sort({[sortBy]:order}).limit(limit).skip(startIndex);
+        // highlights:{ $regex: highlight, $options: 'i' } ,prep_time: { $regex: cookingTime, $options: 'i' }
+        console.log(recipes);
+        return res.status(200).json(recipes);
+
+    }catch(err){
+        next(err);
+    }
+}

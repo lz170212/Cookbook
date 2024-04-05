@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -10,12 +10,24 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false); // for drop down nav
   const toggle = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
-  const [searchTerm, setSearchTerm] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     e.preventDefault();
-    useNavigate(`/search?searchTerm=${searchTerm}`);
+    console.log("enter handlesearch");
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('searchTerm',searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
   };
+
+  useEffect(()=>{  // use for user change url param directly to search
+    const urlParams = new URLSearchParams(location.search);
+    const urlSearchTerm = urlParams.get("searchTerm");
+    if(urlSearchTerm) setSearchTerm(urlSearchTerm);
+  },[location.search]);
+
   return (
     <header className="sticky -top-0 bg-slate-200 shadow-md z-10">
       <div className="flex justify-between items-center max-w-6xl  mx-auto p-3">
@@ -25,7 +37,7 @@ export default function Header() {
           </h1>
         </Link>
         <form
-          onClick={handleSearch}
+          onSubmit={handleSearch}
           className="bg-slate-100 p-3 rounded-lg flex items-center"
         >
           <input
