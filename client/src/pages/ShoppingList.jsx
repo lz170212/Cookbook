@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import IngredientItem from '../components/IngredientItem';
+import ShoppingListItem from '../components/ShoppingListItem';
 
 export default function ShoppingListPage() {
 
-  const [ myStores, setMyStores ] = useState(null)
-  const [ shoppingList, setShoppingList ] = useState([])
-
-    // shoppingList: [ {item: xxx, quantity: 11, related_recipes: []}, { ... } ]
+  const [ myStores, setMyStores ] = useState({})
+  const [ shoppingList, setShoppingList ] = useState({})
 
   const extractFromMenu = (weekly_menu) => {
 
@@ -46,8 +44,8 @@ export default function ShoppingListPage() {
   const getMyStores = async () => {
     try {
       const res = await fetch('/api/user/my-stores')
-      const {data} = await res.json()
-      setMyStores(data)
+      const {my_stores} = await res.json()
+      setMyStores(my_stores)
 
     } catch(err){
       console.log(err.message)
@@ -60,7 +58,7 @@ export default function ShoppingListPage() {
     getMyStores()
   }, [])
 
-  console.log(shoppingList)
+  // console.log(Object.keys(shoppingList))
 
   return (
     <div className='w-full font-montserrat mx-10'>
@@ -68,7 +66,18 @@ export default function ShoppingListPage() {
       <h1 className='font-bold text-blue-500 text-2xl mx-auto my-6'>Groceries for the Week</h1>
       
       <div className=''>
-        shopping list table
+        {
+          Object.keys(shoppingList).length ?
+            Object.keys(shoppingList).map((ingredient, i) => {
+              console.log(shoppingList[ingredient])
+              let { quantity, related_recipes} = shoppingList[ingredient]
+              let store = myStores[ingredient] !== undefined ? myStores[ingredient] : ''
+              return <ShoppingListItem key={i} ingredient={ingredient} quantity={quantity} related_recipes={related_recipes} store={store} index={i}/>
+
+            })
+            :
+            "You need to create weekly menu first"
+        }
       </div>
     </div>
   )

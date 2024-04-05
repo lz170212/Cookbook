@@ -55,3 +55,14 @@ export const getMyStores = async (req, res, next) => {
       next(err);
 }
 }
+
+export const saveStore = async (req, res, next) => {
+  try{
+    let { ingredient, storeName } = req.body
+    const data = await User.findOneAndUpdate({_id: req.user.id}, { $set: { [`my_stores.${ingredient}`]: storeName}})
+    res.status(200).json("store change saved!")
+
+  } catch(err){
+    next(err);
+  }
+}
