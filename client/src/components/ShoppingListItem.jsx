@@ -18,10 +18,29 @@ export default function ShoppingListItem ({ ingredient, quantity, related_recipe
                     },
                     body: JSON.stringify({ingredient, storeName})
                 })
+
+                console.log(await res.json())
                 
             } catch (err){
                 console.log(err.message)
             }
+        }
+    }
+
+    const handleBlur = async () => {
+        try {
+            const res = await fetch('/api/user/save-store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ingredient, storeName})
+            })
+            
+            console.log(await res.json())
+            
+        } catch (err){
+            console.log(err.message)
         }
     }
 
@@ -46,6 +65,7 @@ export default function ShoppingListItem ({ ingredient, quantity, related_recipe
                         placeholder='Enter Store Name...'
                         onChange={handleStoreChange} 
                         onKeyDown={handleStoreSave}
+                        onBlur={handleBlur}
                 />
             </div>
         </div>
