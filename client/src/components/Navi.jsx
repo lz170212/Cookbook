@@ -13,12 +13,12 @@ export default function Navi() {
     };
 
   return (
-    <nav className='bg-gray-100 shadow-md h-screen w-[150px]'>
+    <nav className='bg-gray-100 shadow-md md:min-h-screen'>
        <ul className='mt-5'>
         {
             Menus.map((menu,index)=>(
                 <li key={index} className=' text-gray-700 text-sm font-semibold flex items-center
-                gap-x-4 curson-pointer p-5 hover:bg-white  rounded-md' onClick={changeColor()}><NavLink to={menu.url}  ><span className='font-medium flex-1'>{menu.title}</span></NavLink></li>
+                gap-x-4 curson-pointer p-5 hover:bg-white  rounded-md' onClick={changeColor()}><NavLink to={menu.url}  ><span className='p-5 font-medium flex-1 whitespace-nowrap'>{menu.title}</span></NavLink></li>
             ))
         }
        </ul>

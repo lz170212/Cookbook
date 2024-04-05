@@ -13,7 +13,8 @@ export default function DropDownNav({closeDropDown}) {
   ];
 
   return (
-      <div className='h-screen absolute right-0 top-18 z-10 w-48 bg-white shadow-lg rounded-md origin-top-right' >
+    <div id='container' onClick={closeDropDown} className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center ">
+      <div className='h-screen absolute right-0 top-18 z-20 w-48 bg-white shadow-lg rounded-md origin-top-right' >
         <ul className="mt-5">
           {Menus.map((menu, index) => (
             <li
@@ -32,6 +33,7 @@ export default function DropDownNav({closeDropDown}) {
                 <SignOut location={'dropdown'} closeDropDown={closeDropDown}></SignOut>
             </li>
         </ul>
+      </div>
       </div>
   );
 }

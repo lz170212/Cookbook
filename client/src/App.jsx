@@ -18,6 +18,7 @@ export default function App() {
     <Header></Header>
       <Routes>
         <Route path='/' element={<Home/>}/>
+        <Route path='/search' element ={<Home/>} />
         <Route path='/recipe/:id' element={<RecipePage />} />
         <Route path='/sign-in' element={<SignIn/>}/>
         <Route path='/sign-up' element={<SignUp/>}/>

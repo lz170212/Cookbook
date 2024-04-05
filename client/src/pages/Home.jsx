@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import RecipeCard from '../components/RecipeCard'
+import Filter from '../components/Filter'
 
 // const recipes = [ 
 //   {
@@ -177,6 +178,8 @@ export default function Home() {
   }, [])
 
   return (
+    <div className='flex flex-col md:flex-row'>
+    <Filter></Filter>
     <div className='py-5 px-[5vw] md:px-[7vw] lg:px-[10vw] gap-5 flex flex-wrap'>
       {
         recipes ? 
@@ -185,6 +188,7 @@ export default function Home() {
         })
         : ""
       }
+    </div>
     </div>
   )
 }
