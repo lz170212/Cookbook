@@ -155,7 +155,9 @@ export default function Home() {
 
   const [ recipes, setRecipes ] = useState(null)
 
-  const fetchRecipes = async () => {
+  // recipe: { page: 1, data: [], totalCount: xxx}
+
+  const fetchRecipes = async ({ page=1 }) => {
     try {
       const res = await fetch('/api/recipe/get', {
           method: 'GET'})
@@ -171,9 +173,8 @@ export default function Home() {
 
   useEffect(() => {
     if(recipes === null){
-        fetchRecipes()
+        fetchRecipes({})
     }
-
   }, [])
 
   return (

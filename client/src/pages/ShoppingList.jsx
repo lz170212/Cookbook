@@ -1,77 +1,75 @@
-import React, { useEffect, useState, createContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import IngredientItem from '../components/IngredientItem';
 
-// export const ShoppingListContext = createContext({})
+export default function ShoppingListPage() {
 
-export default function ShoppingList() {
+  const [ myStores, setMyStores ] = useState(null)
+  const [ shoppingList, setShoppingList ] = useState([])
 
-  const [ ingredients, setIngredients ] = useState(null)
+    // shoppingList: [ {item: xxx, quantity: 11, related_recipes: []}, { ... } ]
 
-  const extractIngredients = ( weekly_menu ) => {
-    // { name: { quantity: xxx, recipes: {} } }
-    
-    let result = { } 
-    for (let i = 0; i < weekly_menu.length; i++){
-      let { name: recipe, ingredients } = weekly_menu[i].menu
-      for (let j = 0 ; j < ingredients.length; j ++){
-        let array = ingredients[j].split(' ')
-        let ingredient = array[array.length - 1]
-        let quantity = isNaN(Number(ingredients[j].split(' ')[0])) ? 0.1 : Number(ingredients[j].split(' ')[0])
+  const extractFromMenu = (weekly_menu) => {
 
-        if (ingredient in result){
-          
-          result[ingredient].quantity += quantity
-          if (!recipe in result[ingredient].recipes){
-            result[ingredient].recipes[recipe] = 1
-          } else {
-            result[ingredient].recipes[recipe] += 1
+    let list = weekly_menu.reduce((acc, {menu}) => {
+      let { name: recipe, ingredients} = menu;
+      for(let j=0; j < ingredients.length; j++){
+        let ingredientsArr = ingredients[j].split(' ')
+        let quantity = Number(ingredientsArr[0])
+        let item = ingredientsArr[ingredientsArr.length-1]
+        
+        if(acc[item]){
+          acc[item].quantity += quantity
+          if(!acc[item].related_recipes.includes(recipe)){
+            acc[item].related_recipes.push(recipe)
           }
-          
         } else {
-          result[ingredient] = { quantity, recipes: {[recipe]: 1} }
+          acc[item] = {quantity, related_recipes: [recipe]}
         }
       }
-      
-      setIngredients(result)
-    }
+      return acc
+    }, {})
 
-
-
+    setShoppingList(list)
   }
 
-  const fetchWeeklyMenu = async () => {
+  const formListWithWeeklyMenu = async () => {
     try{
       const res = await fetch('/api/recipe/weekly-menu')
       const { weekly_menu } = await res.json()
-      extractIngredients(weekly_menu)
+      extractFromMenu(weekly_menu)
+      
+    } catch(err){
+      console.log(err.message)
+    }
+  }
+
+  const getMyStores = async () => {
+    try {
+      const res = await fetch('/api/user/my-stores')
+      const {data} = await res.json()
+      setMyStores(data)
 
     } catch(err){
       console.log(err.message)
     }
- 
+
   }
 
   useEffect(() => {
-    fetchWeeklyMenu()
+    formListWithWeeklyMenu()
+    getMyStores()
   }, [])
 
+  console.log(shoppingList)
+
   return (
-    // <ShoppingListContext.Provider value={{ ingredients, setIngredients }}>
     <div className='w-full font-montserrat mx-10'>
       
       <h1 className='font-bold text-blue-500 text-2xl mx-auto my-6'>Groceries for the Week</h1>
       
       <div className=''>
-        {
-          ingredients ? 
-          Object.keys(ingredients).map((key, i) => {
-            return <IngredientItem key={i} item={key} detail={ingredients[key]} index={i} />
-          })
-          : ""
-        }
-
+        shopping list table
       </div>
     </div>
-    // </ShoppingListContext.Provider>
   )
 }

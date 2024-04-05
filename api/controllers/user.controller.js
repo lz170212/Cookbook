@@ -45,3 +45,13 @@ export const updateUser= async (req,res,next) =>{
 
 
 }
+
+export const getMyStores = async (req, res, next) => {
+  try{
+    const data = await User.findOne({_id: req.user.id})
+    .select("my_stores -_id")
+    res.status(200).json(data);
+  } catch(err){
+      next(err);
+}
+}

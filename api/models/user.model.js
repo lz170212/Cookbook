@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema({
         ref: "Recipe"
     },
     weekly_menu: [weeklyMenuSchema],
+    my_stores: {}
 },{ timestamps: true},{strict:false},
 );
 const User = mongoose.model('User',userSchema);
