@@ -46,7 +46,7 @@ export default function Filter({filter, setFilter}) {
           <label className="font-semibold">Highlights:</label>
           {highlightOptions.map((option,i) => (
             <div key ={i} className="flex gap-2">
-              <input checked={filter.highlights.includes(option)} key={i+"_input"} onChange={handleOnChange} type="checkbox" id={option} className="w-5" name="highlight" value={option} />
+              <input checked={filter.highlights?.includes(option)} key={i+"_input"} onChange={handleOnChange} type="checkbox" id={option} className="w-5" name="highlight" value={option} />
               <label key={i+"_label"} htmlFor={option}>{option}</label>
             </div>
           ))}
