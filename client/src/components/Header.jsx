@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DropDownNav from "./DropDownNav";
 import { useState } from "react";
@@ -12,6 +12,7 @@ export default function Header() {
   const close = () => setIsOpen(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const loc = useLocation();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -23,10 +24,10 @@ export default function Header() {
   };
 
   useEffect(()=>{  // use for user change url param directly to search
-    const urlParams = new URLSearchParams(location.search);
+    const urlParams = new URLSearchParams(loc.search);
     const urlSearchTerm = urlParams.get("searchTerm");
     if(urlSearchTerm) setSearchTerm(urlSearchTerm);
-  },[location.search]);
+  },[loc.search]);
 
   return (
     <header className="sticky -top-0 bg-slate-200 shadow-md z-10">
@@ -57,7 +58,6 @@ export default function Header() {
           <ul className="flex gap-4">
             <Link to="/">
               <li className=" hidden sm:inline text-slate-700 hover:underline">
-                {" "}
                 Home
               </li>
             </Link>

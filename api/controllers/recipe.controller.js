@@ -44,7 +44,7 @@ export const createRecipe = async (req, res, next) => {
 }
 
 export const getAllRecipes = async (req, res, next) => {
-    let maxLimit = 20;
+    let maxLimit = 10;
     try{
         let data = await Recipe.find({ $or: [ {is_customized: false}, { is_customized: { $exists: false} }] })
             .populate('author', "username")
@@ -149,29 +149,35 @@ export const removeMenuFromCalendar= async (req,res,next) =>{
 
 export const getSearchedRecipe = async (req,res,next) =>{
     try{
-        console.log("here i am");
         const searchTerm = req.query.searchTerm || "";
         const limit = parseInt(req.query.limit) || 10;
+        
         const startIndex = parseInt(req.query.startIndex) || 0;
-        let highlight = req.query.highlight;
-        if(highlight===undefined) {
-            highlight =/(.*?)/;
+        const highlightParam = req.query.highlight;
+        let highlight;
+        if(!highlightParam) {
+            highlight = [/(.*?)/];
+        }else{
+            highlight= highlightParam?.split(',');
         }
-        let cookingTime = req.query.cookingTime;
-        if(cookingTime==undefined){
-            cookingTime =/(.*?)/;
-        }
-        const sortBy =req.query.sort || "createdAt";
-        const order = "desc";
+        let cookingTime = req.query.cookingTime || 60;
+        const sortBy = req.query.sort || "createdAt";
+        const order = req.query.order || "desc";
+        console.log(sortBy);
+        console.log(order);
+        /*const sortBy = req.query.sort || "createdAt";
+        const order = req.query.order || "desc";*/
         const recipes = await Recipe.find({
             "$or" :[{name: { $regex: searchTerm, $options: 'i' }},
             {highlights: { $regex: searchTerm, $options: 'i' }},
             {ingredients: { $regex: searchTerm, $options: 'i' }},
             {instructions: { $regex: searchTerm, $options: 'i' }}
-            ]
-        },).sort({[sortBy]:order}).limit(limit).skip(startIndex);
-        // highlights:{ $regex: highlight, $options: 'i' } ,prep_time: { $regex: cookingTime, $options: 'i' }
-        console.log(recipes);
+            ],
+            highlights:{ $all: highlight},
+            prep_time:{ $lte : cookingTime}
+
+        }).sort({[sortBy]:order}).limit(limit).skip(startIndex);
+
         return res.status(200).json(recipes);
 
     }catch(err){
